@@ -1,0 +1,47 @@
+{
+	"sheets": [
+		{
+			"name": "animations",
+			"columns": [
+				{
+					"typeStr": "0",
+					"name": "id"
+				},
+				{
+					"typeStr": "2",
+					"name": "looping",
+					"display": null
+				},
+				{
+					"typeStr": "3",
+					"name": "fps"
+				},
+				{
+					"typeStr": "8",
+					"name": "frames",
+					"display": null
+				}
+			],
+			"lines": [],
+			"separators": [],
+			"props": {}
+		},
+		{
+			"name": "animations@frames",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "14",
+					"name": "tile",
+					"display": null
+				}
+			]
+		}
+	],
+	"customTypes": [],
+	"compress": false
+}

@@ -5,3 +5,5 @@
 -lib castle
 -main reve.test.TestAll
 -hl Test.hl
+
+-cmd hl Test.hl

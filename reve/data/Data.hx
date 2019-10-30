@@ -5,7 +5,8 @@ import hxd.Res;
 /** This static class serves as a wrapper for all app-specific data in the form of a Castle DB database.
     This requires a file in the resource folder called 'data.cdb'. 
     
-    Now this data file must have some required sheets. **/
+    Now this data file must have some required sheets. You can find a sample empty data.cdb that conforms
+    to the schema in the reve/ folder. **/
 @:final class Data {
 
     /** A cache of images turned into Tiles, indexed by filepath **/
@@ -24,14 +25,14 @@ import hxd.Res;
     // Data fetchers
     
     /** Given an identifier for a row in the 'animations' sheet, returns a new Animation **/
-    public static function animation(id: DbAnimationsKind): reve.Animation {
+    public static function animation(id: Db.AnimationsKind): reve.Animation {
         final data = Db.animations.get(id);
 
         final looping = data.looping;
         final fps = data.fps;
         final frames = data.frames.map(f -> toTile(f.tile));
         
-        return new engine.Animation(frames, fps, looping);
+        return new reve.Animation(frames, fps, looping);
     }
 
     //=========================================================================

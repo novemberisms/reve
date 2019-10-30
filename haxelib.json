@@ -1,0 +1,13 @@
+{
+    "name": "reve",
+    "url": "https://github.com/novemberisms/reve",
+    "license": "MIT",
+    "tags": [],
+    "description": "A personal engine built on top of Heaps",
+    "version": "0.1.0",
+    "releasenote": "Initial publish",
+    "contributors": ["novemberisms"],
+    "dependencies": {
+        "heaps": "1.7.0"
+    }
+}

@@ -1,0 +1,7 @@
+-lib heaps
+-lib hlsdl
+-lib tweenxcore
+-lib utest
+-lib castle
+-main reve.test.TestAll
+-hl Test.hl

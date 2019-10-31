@@ -35,6 +35,16 @@ import hxd.Res;
         return new reve.Animation(frames, fps, looping);
     }
 
+    public static function resolveAnimation(id: String): reve.Animation {
+        final data = Db.animations.resolve(id);
+
+        final looping = data.looping;
+        final fps = data.fps;
+        final frames = data.frames.map(f -> toTile(f.tile));
+
+        return new reve.Animation(frames, fps, looping);
+    }
+
     //=========================================================================
     // PRIVATE FUNCTIONS
     //=========================================================================
@@ -52,7 +62,7 @@ import hxd.Res;
 
         final xOffset = size * data.x;
         final yOffset = size * data.y;
-
+        
         return atlas.sub(xOffset, yOffset, width, height);
     }
 

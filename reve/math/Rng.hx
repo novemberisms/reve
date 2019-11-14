@@ -19,13 +19,13 @@ class Rng {
     }
 
     /** Generates a pseudorandom integer from `min` to `max` inclusive. **/
-    public static inline function int(min, max): Int {
+    public static inline function int(min: Int, max: Int): Int {
         final diff = max - min + 1;
         return min + _rand.random(diff);
     }
 
     /** Generates a pseudorandom float from `min` inclusive to `max` exclusive. **/
-    public static inline function float(min, max): Float {
+    public static inline function float(min: Float, max: Float): Float {
         final diff = max - min;
         return min + _rand.srand(diff);
     }

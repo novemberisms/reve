@@ -20,6 +20,7 @@ class TestAll {
         runner.addCase(new TestSpatialHash());
         runner.addCase(new TestBoxFinder());
         runner.addCase(new TestTimeAverage());
+        runner.addCase(new TestCollision());
 
         Report.create(runner);
         runner.run();

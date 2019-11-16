@@ -6,6 +6,7 @@ abstract Circle(HeapsCircle) from HeapsCircle to HeapsCircle {
 
     public var center(get, set): Vector;
     public var radius(get, set): Float;
+    public var bounds(get, never): Rectangle;
 
     public function new(center: Vector, radius: Float) {
         this = new HeapsCircle(center.x, center.y, radius);
@@ -35,5 +36,10 @@ abstract Circle(HeapsCircle) from HeapsCircle to HeapsCircle {
 
     private inline function set_radius(v: Float): Float {
         return this.ray = v;
+    }
+
+    private inline function get_bounds(): Rectangle {
+        final topleft = center - Vector.one * radius;
+        return new Rectangle(topleft, Vector.one * 2 * radius);
     }
 } 

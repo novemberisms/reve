@@ -1,18 +1,18 @@
 package reve.collision.shapes;
 
-import reve.math.Rectangle;
 import reve.math.Vector;
+import reve.math.Rectangle;
 
-class CollisionRectangle implements CollisionShape {
+class CollisionPoint implements CollisionShape {
 
-    public final rectangle: Rectangle;
+    public final vector: Vector;
     public final ownerID: CollisionShapeOwnerID;
 
     public var bounds(get, never): Rectangle;
     public var shapeType(get, never): ShapeType;
 
-    public function new(rect: Rectangle, ownerID: CollisionShapeOwnerID) {
-        rectangle = rect;
+    public function new(vec: Vector, ownerID: CollisionShapeOwnerID) {
+        vector = vec;
         this.ownerID = ownerID;
     }
 
@@ -22,10 +22,10 @@ class CollisionRectangle implements CollisionShape {
     }
 
     private inline function get_bounds(): Rectangle {
-        return rectangle.copy;
+        return new Rectangle(vector, Vector.zero);
     }
 
     private inline function get_shapeType(): ShapeType {
-        return ShapeType.rectangle(this);
+        return ShapeType.point(this);
     }
 }

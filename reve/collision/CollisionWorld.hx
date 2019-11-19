@@ -21,6 +21,31 @@ abstract CollisionWorld(SpatialHash<CollisionShape>) {
         this.add(shape, shape.bounds);
     }
 
+    public function getCollisions(shape: CollisionShape): Array<Collision> {
+        final collisions = new Array<Collision>();
+
+        for (nearbyShape in this.nearby(shape)) {
+            if (!shouldCheckCollision(shape, nearbyShape)) continue;
+            
+            final penetration = shape.getPenetration(nearbyShape);
+            
+            if (penetration.lengthSq == 0) continue;
+            
+            collisions.push({
+                shape: shape,
+                collidingWith: nearbyShape,
+                penetration: penetration,
+            });
+        }
+
+        return collisions;
+    }
+
+    private static function shouldCheckCollision(shapeA: CollisionShape, shapeB: CollisionShape): Bool {
+        if (shapeA.ownerID == shapeB.ownerID) return false;
+        return true;
+    }
+
     private static function calculateCellsPerDimension(
         bounds: Rectangle, 
         averageCellSize: Float

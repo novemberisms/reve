@@ -8,17 +8,20 @@ import haxe.ds.Vector as FixedArray;
 @:generic
 class SpatialHash<T: {}> {
 
-    public final bounds: Rectangle;
-    public final cellSize: Vector;
+    public var entities(get, never): Iterator<T>;
+    public var bounds(get, never): Rectangle;
+    public var cellSize(get, never): Vector;
 
+    private final _cellSize: Vector;
+    private final _bounds: Rectangle;
     private final _cellsPerEntity = new Map<T, Set<Int>>();
     private final _data: FixedArray<Set<T>>;
     private final _width: Int;
     private final _height: Int;
 
     public function new(bounds: Rectangle, cellsPerDimension: Vector) {
-        this.bounds = bounds;
-        cellSize = bounds.size / cellsPerDimension;
+        _bounds = bounds;
+        _cellSize = bounds.size / cellsPerDimension;
 
         _width = Std.int(cellsPerDimension.x);
         _height = Std.int(cellsPerDimension.y);
@@ -29,14 +32,14 @@ class SpatialHash<T: {}> {
 
     /** Adds an entity into the spatialhash with the given bounds. If the entity has
         already been added, this will update the bounds associated with the entity. **/
-    public function add(entity: T, bounds: Rectangle) {
+    public function add(entity: T, entityBounds: Rectangle) {
 
         if (has(entity)) remove(entity);
         
         _cellsPerEntity[entity] = new Set<Int>();
 
-        final startCell = toGridCoords(bounds.topleft);
-        final endCell = toGridCoords(bounds.bottomright);
+        final startCell = toGridCoords(entityBounds.topleft);
+        final endCell = toGridCoords(entityBounds.bottomright);
 
         final startX = Std.int(startCell.x);
         final startY = Std.int(startCell.y);
@@ -90,7 +93,7 @@ class SpatialHash<T: {}> {
     }
 
     private function toGridCoords(position: Vector): Vector {
-        final fromOrigin = position - bounds.topleft;
+        final fromOrigin = position - _bounds.topleft;
         final gridCoords = (fromOrigin / cellSize).floor(); 
         if (gridCoords.x < 0) gridCoords.x = 0;
         if (gridCoords.y < 0) gridCoords.y = 0;
@@ -101,6 +104,18 @@ class SpatialHash<T: {}> {
 
     private inline function toIndex(gx: Int, gy: Int): Int {
         return gy * _width + gx;
+    }
+
+    private inline function get_entities(): Iterator<T> {
+        return _cellsPerEntity.keys();
+    }
+
+    private inline function get_bounds(): Rectangle {
+        return _bounds.copy;
+    }
+
+    private inline function get_cellSize(): Vector {
+        return _cellSize.copy;
     }
 
 }

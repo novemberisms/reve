@@ -11,9 +11,11 @@ class CollisionPoint implements CollisionShape {
     public var bounds(get, never): Rectangle;
     public var shapeType(get, never): ShapeType;
 
-    public function new(vec: Vector, ownerID: CollisionShapeOwnerID) {
+    public function new(vec: Vector, ?ownerID: CollisionShapeOwnerID) {
         vector = vec;
-        this.ownerID = ownerID;
+        this.ownerID = ownerID == null
+            ? CollisionShapeOwnerID.iota()
+            : ownerID;
     }
 
     // TODO

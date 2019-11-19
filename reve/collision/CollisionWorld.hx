@@ -5,22 +5,20 @@ import reve.spatialhash.SpatialHash;
 import reve.math.Rectangle;
 import reve.collision.shapes.CollisionShape;
 
-class CollisionWorld {
-
-    private final _spatialHash: SpatialHash<CollisionShape>;
-    private var _collisionsThisFrame = new Array<Collision>();
+@:forward(remove, has)
+abstract CollisionWorld(SpatialHash<CollisionShape>) {
 
     public function new(bounds: Rectangle, averageCellSize: Float = 100) {
         final cellsPerDimension = calculateCellsPerDimension(bounds, averageCellSize);
-        _spatialHash = new SpatialHash(bounds, cellsPerDimension);
+        this = new SpatialHash(bounds, cellsPerDimension);
     }
 
-    public function update() {
-        // flush the collisions from the previous frame
-        _collisionsThisFrame = new Array<Collision>();
-
-        
-
+    /**
+     * Adds a shape to the collision world. If the shape has already been added, it will update the location of the shape.
+     * @param shape the shape to add
+     */
+    public function add(shape: CollisionShape) {
+        this.add(shape, shape.bounds);
     }
 
     private static function calculateCellsPerDimension(
@@ -31,5 +29,4 @@ class CollisionWorld {
         final cellsVertical = Math.ceil(bounds.height / averageCellSize);
         return new Vector(cellsHorizontal, cellsVertical);
     }
-
 }

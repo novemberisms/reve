@@ -12,9 +12,11 @@ class CollisionCircle implements CollisionShape {
     public var bounds(get, never): Rectangle;
     public var shapeType(get, never): ShapeType;
 
-    public function new(circ: Circle, ownerID: CollisionShapeOwnerID) {
+    public function new(circ: Circle, ?ownerID: CollisionShapeOwnerID) {
         circle = circ;
-        this.ownerID = ownerID;
+        this.ownerID = ownerID == null 
+            ? CollisionShapeOwnerID.iota()
+            : ownerID;
     }
 
     // TODO

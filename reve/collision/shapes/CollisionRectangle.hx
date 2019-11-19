@@ -11,9 +11,11 @@ class CollisionRectangle implements CollisionShape {
     public var bounds(get, never): Rectangle;
     public var shapeType(get, never): ShapeType;
 
-    public function new(rect: Rectangle, ownerID: CollisionShapeOwnerID) {
+    public function new(rect: Rectangle, ?ownerID: CollisionShapeOwnerID) {
         rectangle = rect;
-        this.ownerID = ownerID;
+        this.ownerID = ownerID == null
+            ? CollisionShapeOwnerID.iota()
+            : ownerID;
     }
 
     // TODO

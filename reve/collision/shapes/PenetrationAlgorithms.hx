@@ -15,6 +15,7 @@ class PenetrationAlgorithms {
                     case rectangle(rB):
                         return vecRect(pA.vector, rB.rectangle);
                     case circle(cB):
+                        return vecCirc(pA.vector, cB.circle);
                 }
 			case rectangle(rA):
 				switch (shapeB.shapeType) {
@@ -26,6 +27,7 @@ class PenetrationAlgorithms {
 			case circle(cA):
 				switch (shapeB.shapeType) {
 					case point(pB):
+                        return -vecCirc(pB.vector, cA.circle);
 					case rectangle(rB):
 					case circle(cB):
 				}
@@ -67,6 +69,8 @@ class PenetrationAlgorithms {
         if (!c.contains(v)) return Vector.zero;
 
         final toCenter = c.center - v;
+
+        if (toCenter == Vector.zero) return Vector.down * c.radius;
 
         final distanceToSide = c.radius - toCenter.length;
 

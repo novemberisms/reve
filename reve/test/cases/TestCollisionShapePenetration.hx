@@ -1,5 +1,7 @@
 package reve.test.cases;
 
+import hxd.Math;
+import reve.collision.shapes.CollisionCircle;
 import reve.collision.shapes.CollisionPoint;
 import reve.collision.shapes.ICollisionShape;
 import utest.Assert;
@@ -78,6 +80,49 @@ class TestCollisionShapePenetration extends Test {
         // ... bottomright ... up
         doTest(CollisionPoint.from(endQuarterSide, endQuarterSide), square, Vector.up * quarterSide, "bottomRightSquareUp");
 
+    }
+
+    function testPointCirc() {
+        final origin = Vector.zero;
+        final radius = 10.0;
+
+        final circle = CollisionCircle.from(origin, radius);
+
+        var point: CollisionPoint;
+
+        // a point that is at the center should return a penetration that
+        // points down
+        point = new CollisionPoint(origin);
+
+        doTest(point, circle, Vector.down * radius, "pointCircCenterDown");
+
+        // spiral test
+
+        final testCount = 10;
+        final angleInc = 2 * Math.PI / testCount;
+        final distInc = (radius - 2) / testCount;
+
+        var dist = 1.0;
+        var angle = 0.0;
+
+        for (i in 0...testCount) {
+            final vector = origin + Vector.unit(angle) * dist;
+
+            point = new CollisionPoint(vector);
+
+            final penetration = point.getPenetration(circle);
+
+            final sameAngle = reve.math.algorithms.AngleEquate.angleEquals(
+                angle,
+                (-penetration).angle 
+            );
+
+            trace('angle:$angle penangle:${penetration.angle} sameangle:$sameAngle');
+
+            angle += angleInc;
+            dist += distInc;
+
+        }
     }
 
     // use labels like "rr0", "rr1"

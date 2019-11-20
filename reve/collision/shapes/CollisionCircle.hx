@@ -19,6 +19,10 @@ class CollisionCircle implements ICollisionShape {
             : ownerID;
     }
 
+    public static function from(center: Vector, radius: Float, ?ownerID: CollisionShapeOwnerID): CollisionCircle {
+        return new CollisionCircle(new Circle(center, radius), ownerID);
+    } 
+
     // TODO
     public function getPenetration(other: ICollisionShape): Vector {
         return Vector.zero;

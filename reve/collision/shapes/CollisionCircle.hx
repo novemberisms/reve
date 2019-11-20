@@ -4,7 +4,7 @@ import reve.math.Circle;
 import reve.math.Rectangle;
 import reve.math.Vector;
 
-class CollisionCircle implements CollisionShape {
+class CollisionCircle implements ICollisionShape {
 
     public final circle: Circle;
     public final ownerID: CollisionShapeOwnerID;
@@ -20,7 +20,7 @@ class CollisionCircle implements CollisionShape {
     }
 
     // TODO
-    public function getPenetration(other: CollisionShape): Vector {
+    public function getPenetration(other: ICollisionShape): Vector {
         return Vector.zero;
     }
 

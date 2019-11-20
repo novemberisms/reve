@@ -3,7 +3,7 @@ package reve.collision.shapes;
 import reve.math.Vector;
 import reve.math.Rectangle;
 
-class CollisionPoint implements CollisionShape {
+class CollisionPoint implements ICollisionShape {
 
     public final vector: Vector;
     public final ownerID: CollisionShapeOwnerID;
@@ -18,9 +18,12 @@ class CollisionPoint implements CollisionShape {
             : ownerID;
     }
 
-    // TODO
-    public function getPenetration(other: CollisionShape): Vector {
-        return Vector.zero;
+    public static inline function from(x: Float, y: Float, ?ownerID: CollisionShapeOwnerID): CollisionPoint {
+        return new CollisionPoint(new Vector(x, y), ownerID);
+    }
+
+    public inline function getPenetration(other: ICollisionShape): Vector {
+        return PenetrationAlgorithms.getPenetration(this, other);
     }
 
     private inline function get_bounds(): Rectangle {

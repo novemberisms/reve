@@ -6,8 +6,30 @@ import reve.math.Vector;
 
 class PenetrationAlgorithms {
 
-    public static function getPenetration(shapeA: CollisionShape, shapeB: CollisionShape): Vector {
-
+    public static function getPenetration(shapeA: ICollisionShape, shapeB: ICollisionShape): Vector {
+        switch (shapeA.shapeType) {
+            case point(pA):
+                switch (shapeB.shapeType) {
+                    case point(pB):
+                        return vecVec(pA.vector, pB.vector);
+                    case rectangle(rB):
+                        return vecRect(pA.vector, rB.rectangle);
+                    case circle(cB):
+                }
+			case rectangle(rA):
+				switch (shapeB.shapeType) {
+					case point(pB):
+                        return -vecRect(pB.vector, rA.rectangle);
+					case rectangle(rB):
+					case circle(cB):
+				}
+			case circle(cA):
+				switch (shapeB.shapeType) {
+					case point(pB):
+					case rectangle(rB):
+					case circle(cB):
+				}
+        }
         return Vector.zero;
     }
 
@@ -29,11 +51,26 @@ class PenetrationAlgorithms {
             Math.min(distToTop, distToBottom)
         );
 
-        if (lowest == distToLeft) return Vector.right * distToLeft;
-        if (lowest == distToRight) return Vector.left * distToRight;
-        if (lowest == distToTop) return Vector.down * distToTop;
+        // as you can see, if a point is in the dead center of a square, it will prioritize a vector pointing down.
+        // in a wide rectangle, points on the diagonals will prioritize pointing down, then up
+        // in a tall rectangle, points on the diagonals will prioritize pointing right, then left
 
-        return Vector.up * distToBottom;
+        if (lowest == distToTop) return Vector.down * distToTop;
+        if (lowest == distToBottom) return Vector.up * distToBottom;
+        if (lowest == distToLeft) return Vector.right * distToLeft;
+        
+        return Vector.left * distToRight;
+    }
+
+    // TODO: test
+    private static function vecCirc(v: Vector, c: Circle): Vector {
+        if (!c.contains(v)) return Vector.zero;
+
+        final toCenter = c.center - v;
+
+        final distanceToSide = c.radius - toCenter.length;
+
+        return toCenter.normalized * distanceToSide;
     }
 
     private static function rectRect(r1: Rectangle, r2: Rectangle): Vector {
@@ -47,7 +84,4 @@ class PenetrationAlgorithms {
         return Vector.zero;
     }
 
-    private static function rectVec(r: Rectangle, v: Vector): Vector {
-        return Vector.zero;
-    }
 }

@@ -1,10 +1,10 @@
 package reve.collision;
 
-import reve.collision.shapes.CollisionShape;
+import reve.collision.shapes.ICollisionShape;
 import reve.math.Vector;
 
 typedef Collision = {
-    public final shape: CollisionShape;
-    public final collidingWith: CollisionShape;
+    public final shape: ICollisionShape;
+    public final collidingWith: ICollisionShape;
     public final penetration: Vector;
 }

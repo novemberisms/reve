@@ -3,10 +3,10 @@ package reve.collision;
 import reve.math.Vector;
 import reve.spatialhash.SpatialHash;
 import reve.math.Rectangle;
-import reve.collision.shapes.CollisionShape;
+import reve.collision.shapes.ICollisionShape;
 
 @:forward(remove, has)
-abstract CollisionWorld(SpatialHash<CollisionShape>) {
+abstract CollisionWorld(SpatialHash<ICollisionShape>) {
 
     public function new(bounds: Rectangle, averageCellSize: Float = 100) {
         final cellsPerDimension = calculateCellsPerDimension(bounds, averageCellSize);
@@ -17,11 +17,11 @@ abstract CollisionWorld(SpatialHash<CollisionShape>) {
      * Adds a shape to the collision world. If the shape has already been added, it will update the location of the shape.
      * @param shape the shape to add
      */
-    public function add(shape: CollisionShape) {
+    public function add(shape: ICollisionShape) {
         this.add(shape, shape.bounds);
     }
 
-    public function getCollisions(shape: CollisionShape): Array<Collision> {
+    public function getCollisions(shape: ICollisionShape): Array<Collision> {
         final collisions = new Array<Collision>();
 
         for (nearbyShape in this.nearby(shape)) {
@@ -41,7 +41,7 @@ abstract CollisionWorld(SpatialHash<CollisionShape>) {
         return collisions;
     }
 
-    private static function shouldCheckCollision(shapeA: CollisionShape, shapeB: CollisionShape): Bool {
+    private static function shouldCheckCollision(shapeA: ICollisionShape, shapeB: ICollisionShape): Bool {
         if (shapeA.ownerID == shapeB.ownerID) return false;
         return true;
     }

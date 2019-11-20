@@ -21,6 +21,7 @@ class TestAll {
         runner.addCase(new TestBoxFinder());
         runner.addCase(new TestTimeAverage());
         runner.addCase(new TestCollision());
+        runner.addCase(new TestCollisionShapePenetration());
 
         Report.create(runner);
         runner.run();

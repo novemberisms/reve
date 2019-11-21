@@ -117,7 +117,10 @@ class TestCollisionShapePenetration extends Test {
                 (-penetration).angle 
             );
 
-            trace('angle:$angle penangle:${penetration.angle} sameangle:$sameAngle');
+            final deg = Math.radToDeg(angle);
+            final ged = Math.radToDeg(penetration.angle);
+
+            trace('angle:$deg penangle:$ged sameangle:$sameAngle');
 
             angle += angleInc;
             dist += distInc;

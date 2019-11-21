@@ -1,5 +1,6 @@
 package reve.test.cases;
 
+import reve.math.algorithms.AngleEquate;
 import hxd.Math;
 import reve.collision.shapes.CollisionCircle;
 import reve.collision.shapes.CollisionPoint;
@@ -13,9 +14,14 @@ import reve.collision.shapes.CollisionRectangle;
 class TestCollisionShapePenetration extends Test {
 
 	function doTest(shapeA: ICollisionShape, shapeB: ICollisionShape, expected: Vector, label: String) {
+        // do the penetration test
         final penetration = shapeA.getPenetration(shapeB);
 		Assert.isTrue(expected == penetration, 'when testing label "$label", expected penetration of $expected but got $penetration instead');
-	}
+        
+        // this makes sure that a penetration test works both ways.
+        final reversePenetration = shapeB.getPenetration(shapeA);
+        Assert.isTrue(-expected == reversePenetration, 'when testing the reverse penetration for label "$label", expected $expected but got $reversePenetration instead');
+    }
 
     function testPointRect() {
         final startX = 10.0;
@@ -112,23 +118,27 @@ class TestCollisionShapePenetration extends Test {
 
             final penetration = point.getPenetration(circle);
 
-            final sameAngle = reve.math.algorithms.AngleEquate.angleEquals(
-                angle,
-                (-penetration).angle 
+            // the magnitude of the penetration must be from the outer edge of the circle
+            // to the current distance
+
+            Assert.floatEquals(radius - dist, penetration.length);
+            
+            // the penetration must be pointing inwards towards the center of the
+            // circle
+
+            final sameAngle = AngleEquate.angleEquals(
+                angle + Math.PI,
+                penetration.angle 
             );
 
-            final deg = Math.radToDeg(angle);
-            final ged = Math.radToDeg(penetration.angle);
-
-            trace('angle:$deg penangle:$ged sameangle:$sameAngle');
-
+            Assert.isTrue(sameAngle);
+            
             angle += angleInc;
             dist += distInc;
 
         }
     }
 
-    // use labels like "rr0", "rr1"
     function testRectRect() {
         var r1: CollisionRectangle;
         var r2: CollisionRectangle;

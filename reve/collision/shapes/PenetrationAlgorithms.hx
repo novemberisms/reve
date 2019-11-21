@@ -22,14 +22,18 @@ class PenetrationAlgorithms {
 					case point(pB):
                         return -vecRect(pB.vector, rA.rectangle);
 					case rectangle(rB):
+                        return rectRect(rA.rectangle, rB.rectangle);
 					case circle(cB):
+                        return rectCirc(rA.rectangle, cB.circle);
 				}
 			case circle(cA):
 				switch (shapeB.shapeType) {
 					case point(pB):
                         return -vecCirc(pB.vector, cA.circle);
 					case rectangle(rB):
+                        return -rectCirc(rB.rectangle, cA.circle);
 					case circle(cB):
+                        return circCirc(cA.circle, cB.circle);
 				}
         }
         return Vector.zero;
@@ -39,7 +43,6 @@ class PenetrationAlgorithms {
         return Vector.zero;
     }
 
-    // TODO: test
     private static function vecRect(v: Vector, r: Rectangle): Vector {
         if (!r.contains(v)) return Vector.zero;
 
@@ -64,7 +67,6 @@ class PenetrationAlgorithms {
         return Vector.left * distToRight;
     }
 
-    // TODO: test
     private static function vecCirc(v: Vector, c: Circle): Vector {
         if (!c.contains(v)) return Vector.zero;
 
@@ -72,20 +74,87 @@ class PenetrationAlgorithms {
 
         if (toCenter == Vector.zero) return Vector.down * c.radius;
 
-        final distanceToSide = c.radius - toCenter.length;
-
-        return toCenter.normalized * distanceToSide;
+        return (toCenter.normalized * c.radius) - toCenter;
     }
 
+    // TODO: test
     private static function rectRect(r1: Rectangle, r2: Rectangle): Vector {
         if (!r1.intersects(r2)) return Vector.zero;
 
+        final rightOverlap = r1.xMax - r2.xMin;
+        final leftOverlap = r2.xMax - r1.xMin;
+        final downOverlap = r1.yMax - r2.yMin;
+        final upOverlap = r2.yMax - r1.yMin;
 
+        final lowest = Math.min(
+            Math.min(rightOverlap, leftOverlap),
+            Math.min(upOverlap, downOverlap)
+        );
+
+        if (lowest == downOverlap) return Vector.down * downOverlap;
+        if (lowest == upOverlap) return Vector.up * upOverlap;
+        if (lowest == rightOverlap) return Vector.right * rightOverlap;
+
+        return Vector.left * leftOverlap;
+    }
+
+
+    private static function rectCirc(r: Rectangle, c: Circle): Vector {
+        if (!c.collideBounds(r)) return Vector.zero;
+
+        // we know they are intersecting. not we just need to find the penetration
+        
+        final cx = c.center.x;
+        final cy = c.center.y;
+        
+
+        if (cx < r.xMin) {
+            // circle is in left region
+            if (cy < r.yMin) {
+                // circle is in topleft region
+                return cornerPenetration(c.center, c.radius, r.topleft);
+            } else if (cy > r.yMax) {
+                // circle is in bottomleft region
+                return cornerPenetration(c.center, c.radius, r.bottomleft);
+            } else {
+                // circle is in midleft region
+                return Vector.left * (cx + c.radius - r.xMin);
+            }
+        } else if (cx > r.xMax) {
+            // circle is in right region
+            if (cy < r.yMin) {
+                // circle is in topright region
+                return cornerPenetration(c.center, c.radius, r.topright);
+            } else if (cy > r.yMax) {
+                // circle is in bottomright region
+                return cornerPenetration(c.center, c.radius, r.bottomright);
+            } else {
+                // circle is in midright region
+                return Vector.right * (r.xMax - (cx - c.radius));
+            }
+        } else {
+            // circle is in center region
+            if (cy < r.yMin) {
+                // circle is in topcenter region
+                return Vector.up * (cy + c.radius - r.yMin);
+            } else if (cy > r.yMax) {
+                // circle is in bottomcenter region
+                return Vector.down * (r.yMax - (cy - c.radius));
+            } else {
+                // circle is entirely within rectangle
+                return rectRect(r, c.bounds);
+            }
+        }
+    }
+
+    private static function circCirc(c1: Circle, c2: Circle): Vector {
         return Vector.zero;
     }
 
-    private static function rectCirc(r: Rectangle, c: Circle): Vector {
-        return Vector.zero;
+    /** Helper function for rectCirc */
+    private static inline function cornerPenetration(center: Vector, radius: Float, corner: Vector): Vector {
+        final toCenter = center - corner;
+        return (toCenter.normalized * radius) - toCenter;
     }
 
 }

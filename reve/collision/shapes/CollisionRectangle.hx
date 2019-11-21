@@ -34,9 +34,8 @@ class CollisionRectangle implements ICollisionShape {
         return new CollisionRectangle(rect, ownerID);
     }
 
-    // TODO
-    public function getPenetration(other: ICollisionShape): Vector {
-        return Vector.zero;
+    public inline function getPenetration(other: ICollisionShape): Vector {
+        return PenetrationAlgorithms.getPenetration(this, other);
     }
 
     private inline function get_bounds(): Rectangle {

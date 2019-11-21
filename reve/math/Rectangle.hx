@@ -9,6 +9,11 @@ abstract Rectangle(Bounds) from Bounds to Bounds {
     public var topleft(get, set): Vector;
     /** Setting `bottomright` will move the rectangle without modifying its size. **/
     public var bottomright(get, set): Vector;
+    /** Setting `topright` will move the rectangle without modifying its size. **/
+    public var topright(get, set): Vector;
+    /** Setting `bottomleft` will move the rectangle without modifying its size. **/
+    public var bottomleft(get, set): Vector;
+
     /** Setting `size` will increase the size of the rectangle but keep it anchored around the top left. **/
     public var size(get, set): Vector;
     /** Setting `center` will change the position of the rectangle but keep its size. **/
@@ -156,6 +161,32 @@ abstract Rectangle(Bounds) from Bounds to Bounds {
         this.yMin = v.y - currSize.y;
         return v;
     }
+
+    private inline function get_topright(): Vector {
+        return new Vector(this.xMax, this.yMin);
+    }
+
+    private inline function set_topright(v: Vector): Vector {
+        final currSize = size;
+        this.xMax = v.x;
+        this.yMin = v.y;
+        this.xMin = v.x - currSize.x;
+        this.yMax = v.y + currSize.y;
+        return v;
+    }
+
+    private inline function get_bottomleft(): Vector {
+        return new Vector(this.xMin, this.yMax);
+    }
+
+    private inline function set_bottomleft(v: Vector): Vector {
+        final currSize = size;
+        this.xMin = v.x;
+        this.yMax = v.y;
+        this.xMax = v.x + currSize.x;
+        this.yMin = v.y - currSize.y;
+        return v;
+    } 
 
     private inline function get_size(): Vector {
         return new Vector(this.xMax - this.xMin, this.yMax - this.yMin);

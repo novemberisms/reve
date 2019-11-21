@@ -23,9 +23,8 @@ class CollisionCircle implements ICollisionShape {
         return new CollisionCircle(new Circle(center, radius), ownerID);
     } 
 
-    // TODO
-    public function getPenetration(other: ICollisionShape): Vector {
-        return Vector.zero;
+    public inline function getPenetration(other: ICollisionShape): Vector {
+        return PenetrationAlgorithms.getPenetration(this, other);
     }
 
     private inline function get_bounds(): Rectangle {

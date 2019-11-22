@@ -27,6 +27,17 @@ class CollisionCircle implements ICollisionShape {
         return PenetrationAlgorithms.getPenetration(this, other);
     }
 
+    public function collidesWith(other: ICollisionShape): Bool {
+        switch (other.shapeType) {
+            case ShapeType.point(p):
+                return circle.contains(p.vector);
+            case ShapeType.rectangle(r):
+                return circle.collideBounds(r.rectangle);
+            case ShapeType.circle(c):
+                return circle.collideCircle(c.circle);
+        }
+    } 
+
     private inline function get_bounds(): Rectangle {
         return circle.bounds;
     }

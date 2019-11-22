@@ -9,5 +9,7 @@ interface ICollisionShape {
     public var bounds(get, never): Rectangle;
     public var shapeType(get, never): ShapeType;
 
+    public function collidesWith(other: ICollisionShape): Bool;
     public function getPenetration(other: ICollisionShape): Vector;
+    // public function getClosestPointTo(other: ICollisionShape): Vector;
 }

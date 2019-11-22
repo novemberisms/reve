@@ -26,6 +26,17 @@ class CollisionPoint implements ICollisionShape {
         return PenetrationAlgorithms.getPenetration(this, other);
     }
 
+    public function collidesWith(other: ICollisionShape): Bool {
+        switch (other.shapeType) {
+            case point(p):
+                return vector == p.vector;
+            case rectangle(r):
+                return r.rectangle.contains(vector);
+            case circle(c):
+                return c.circle.contains(vector);
+        }
+    }
+
     private inline function get_bounds(): Rectangle {
         return new Rectangle(vector, Vector.zero);
     }

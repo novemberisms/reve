@@ -2,7 +2,7 @@ package reve.math;
 
 import h2d.col.Circle as HeapsCircle;
 
-@:forward(collideBounds)
+@:forward(collideBounds, collideCircle)
 abstract Circle(HeapsCircle) from HeapsCircle to HeapsCircle {
 
     public var center(get, set): Vector;

@@ -106,7 +106,6 @@ class PenetrationAlgorithms {
         
         final cx = c.center.x;
         final cy = c.center.y;
-        
 
         if (cx < r.xMin) {
             // circle is in left region
@@ -148,7 +147,13 @@ class PenetrationAlgorithms {
     }
 
     private static function circCirc(c1: Circle, c2: Circle): Vector {
-        return Vector.zero;
+        if (!c1.collideCircle(c2)) return Vector.zero;
+
+        final toCenter = c2.center - c1.center;
+
+        if (toCenter.lengthSq == 0) return Vector.down * (c1.radius + c2.radius);
+
+        return toCenter.normalized * (c1.radius + c2.radius) - toCenter;
     }
 
     /** Helper function for rectCirc */

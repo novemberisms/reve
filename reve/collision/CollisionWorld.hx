@@ -20,24 +20,16 @@ abstract CollisionWorld(SpatialHash<ICollisionShape>) {
         this.add(shape, shape.bounds);
     }
 
-    public function getCollisions(shape: ICollisionShape): Array<Collision> {
-        final collisions = new Array<Collision>();
+    public function getCollidingShapes(shape: ICollisionShape): Array<ICollisionShape> {
+        final collidingShapes = new Array<ICollisionShape>();
 
         for (nearbyShape in this.nearby(shape)) {
             if (!shouldCheckCollision(shape, nearbyShape)) continue;
-            
-            final penetration = shape.getPenetration(nearbyShape);
-            
-            if (penetration.lengthSq == 0) continue;
-            
-            collisions.push({
-                shape: shape,
-                collidingWith: nearbyShape,
-                penetration: penetration,
-            });
+            if (!shape.collidesWith(nearbyShape)) continue;
+            collidingShapes.push(nearbyShape);
         }
 
-        return collisions;
+        return collidingShapes;
     }
 
     private static function shouldCheckCollision(shapeA: ICollisionShape, shapeB: ICollisionShape): Bool {

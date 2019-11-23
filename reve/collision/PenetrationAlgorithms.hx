@@ -1,4 +1,4 @@
-package reve.collision.shapes;
+package reve.collision;
 
 import reve.math.Circle;
 import reve.math.Rectangle;

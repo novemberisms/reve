@@ -1,8 +1,8 @@
 package reve.test.cases;
 
-import reve.collision.shapes.CollisionPoint;
-import reve.collision.shapes.CollisionCircle;
-import reve.collision.shapes.CollisionRectangle;
+import reve.collision.CollisionPoint;
+import reve.collision.CollisionCircle;
+import reve.collision.CollisionRectangle;
 import reve.math.Vector;
 import reve.math.Rectangle;
 import reve.math.Circle;

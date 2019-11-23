@@ -2,14 +2,14 @@ package reve.test.cases;
 
 import reve.math.algorithms.AngleEquate;
 import hxd.Math;
-import reve.collision.shapes.CollisionCircle;
-import reve.collision.shapes.CollisionPoint;
-import reve.collision.shapes.ICollisionShape;
+import reve.collision.CollisionCircle;
+import reve.collision.CollisionPoint;
+import reve.collision.ICollisionShape;
 import utest.Assert;
 import utest.Test;
 
 import reve.math.Vector;
-import reve.collision.shapes.CollisionRectangle;
+import reve.collision.CollisionRectangle;
 
 class TestCollisionShapePenetration extends Test {
 

@@ -3,7 +3,7 @@ package reve.collision;
 import reve.math.Vector;
 import reve.spatialhash.SpatialHash;
 import reve.math.Rectangle;
-import reve.collision.shapes.ICollisionShape;
+import reve.collision.ICollisionShape;
 
 @:forward(remove, has)
 abstract CollisionWorld(SpatialHash<ICollisionShape>) {

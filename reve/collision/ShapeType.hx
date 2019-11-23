@@ -1,4 +1,4 @@
-package reve.collision.shapes;
+package reve.collision;
 
 enum ShapeType {
     rectangle(rectangle: CollisionRectangle);

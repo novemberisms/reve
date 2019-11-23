@@ -1,4 +1,4 @@
-package reve.collision.shapes;
+package reve.collision;
 
 abstract CollisionShapeOwnerID(Int) {
 

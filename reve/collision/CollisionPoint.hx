@@ -6,7 +6,10 @@ import reve.math.Rectangle;
 class CollisionPoint implements ICollisionShape {
 
     public final vector: Vector;
-    public final ownerID: CollisionShapeOwnerID;
+	public final ownerID: CollisionShapeOwnerID;
+
+	public var collisionLayers = 1;
+	public var collisionMask = 1;
 
     public var bounds(get, never): Rectangle;
     public var shapeType(get, never): ShapeType;

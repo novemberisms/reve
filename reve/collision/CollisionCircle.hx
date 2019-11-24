@@ -9,6 +9,9 @@ class CollisionCircle implements ICollisionShape {
     public final circle: Circle;
     public final ownerID: CollisionShapeOwnerID;
 
+    public var collisionLayers = 1;
+    public var collisionMask = 1;
+
     public var bounds(get, never): Rectangle;
     public var shapeType(get, never): ShapeType;
 

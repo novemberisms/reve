@@ -6,6 +6,9 @@ import reve.math.Vector;
 interface ICollisionShape {
     public final ownerID: CollisionShapeOwnerID;
 
+    public var collisionLayers: Int;
+    public var collisionMask: Int;
+
     public var bounds(get, never): Rectangle;
     public var shapeType(get, never): ShapeType;
 

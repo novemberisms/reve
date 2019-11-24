@@ -33,7 +33,11 @@ abstract CollisionWorld(SpatialHash<ICollisionShape>) {
     }
 
     private static function shouldCheckCollision(shapeA: ICollisionShape, shapeB: ICollisionShape): Bool {
+        // if both shapes belong to the same owner, then do not check collision
         if (shapeA.ownerID == shapeB.ownerID) return false;
+        
+        if (shapeA.collisionMask & shapeB.collisionLayers == 0) return false; 
+
         return true;
     }
 

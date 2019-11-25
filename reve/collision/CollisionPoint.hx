@@ -37,6 +37,8 @@ class CollisionPoint implements ICollisionShape {
                 return r.rectangle.contains(vector);
             case circle(c):
                 return c.circle.contains(vector);
+            case polygon(p):
+                return p.polygon.contains(vector);
         }
     }
 

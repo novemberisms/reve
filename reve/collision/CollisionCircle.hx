@@ -38,6 +38,8 @@ class CollisionCircle implements ICollisionShape {
                 return circle.collideBounds(r.rectangle);
             case ShapeType.circle(c):
                 return circle.collideCircle(c.circle);
+            case ShapeType.polygon(p):
+                return circle.collidePolygon(p.polygon);
         }
     } 
 

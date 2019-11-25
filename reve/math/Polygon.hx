@@ -11,8 +11,53 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
         this = new HeapsPolygon(points);
     }
 
+    // TODO: DOES A POINT ON THE EDGE RETURN FALSE? IT REALLY SHOULD.
     public function contains(point: Vector): Bool {
         return this.contains(point, true);
+    }
+
+    /** 
+     * Returns the distance squared from the closest edge of the polygon to a point **outside** of it.
+     * If the point is inside, returns zero. 
+     * @param point the point to compute distance to
+     */
+    public function getDistanceSquared(point: Vector): Float {
+        return this.distanceSq(point, true);
+    }
+
+    /**
+     * Returns the distance squared from the closest edge of the polygon to a point **inside** of it.
+     * If the point is outside, returns zero
+     * @param point the point to compute distance to
+     */
+    public function getDistanceSquaredInside(point: Vector): Float {
+        return this.distanceSq(point, false);
+    }
+
+    /**
+     * Returns the closest point on the edges of the polygon to the given point.
+     * @param point The point with which to find the closest point to.
+     */
+    public function getClosestPointOnEdgeTo(point: Vector): Vector {
+        return this.projectPoint(point);
+    }
+
+    public function collideBounds(rect: Rectangle): Bool {
+        // if the bounds of this polygon does not even intersect with the rectangle, then there is no chance
+        if (!rect.intersects(bounds)) return false;
+
+        // check each point in the polygon if it is contained within the rectangle. If any does, then they are intersecting
+        for (point in this) {
+            if (rect.contains(point)) return true;
+        } 
+
+        // failing that, check each corner of the rectangle to see if it is contained within the polygon
+        if (contains(rect.topleft)) return true;
+        if (contains(rect.topright)) return true;
+        if (contains(rect.bottomleft)) return true;
+        if (contains(rect.bottomright)) return true;
+
+        return false;
     }
 
     private inline function get_bounds(): Rectangle {

@@ -15,12 +15,17 @@ abstract Circle(HeapsCircle) from HeapsCircle to HeapsCircle {
         this = new HeapsCircle(center.x, center.y, radius);
     }
 
+    // TODO: MAKE SURE A POINT ON THE EDGE RETURNS FALSE
     public inline function contains(point: Vector): Bool {
         return this.contains(point);
     }
 
     public inline function distanceTo(point: Vector): Float {
         return (point - center).length - radius;
+    }
+
+    public inline function collidePolygon(polygon: Polygon): Bool {
+        return polygon.getDistanceSquared(center) < radius * radius;
     }
 
     private inline function get_center(): Vector {

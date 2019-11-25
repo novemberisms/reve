@@ -49,6 +49,8 @@ class CollisionRectangle implements ICollisionShape {
                 return rectangle.intersects(r.rectangle);
             case ShapeType.circle(c):
                 return c.circle.collideBounds(rectangle);
+            case ShapeType.polygon(p):
+                return p.polygon.collideBounds(rectangle);
         }
     }
 

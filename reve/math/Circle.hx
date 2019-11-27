@@ -15,9 +15,9 @@ abstract Circle(HeapsCircle) from HeapsCircle to HeapsCircle {
         this = new HeapsCircle(center.x, center.y, radius);
     }
 
-    // TODO: MAKE SURE A POINT ON THE EDGE RETURNS FALSE
     public inline function contains(point: Vector): Bool {
-        return this.contains(point);
+        final distSq = (point - center).lengthSq;
+        return distSq < this.ray * this.ray;
     }
 
     public inline function distanceTo(point: Vector): Float {

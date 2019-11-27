@@ -31,7 +31,7 @@ class CollisionPolygon implements ICollisionShape {
     }
 
     public inline function getPenetration(other: ICollisionShape): Vector {
-        return Vector.zero;
+        return PenetrationAlgorithms.getPenetration(this, other);
     }
 
     public function collidesWith(other: ICollisionShape): Bool {

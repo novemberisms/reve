@@ -13,7 +13,16 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
 
     // TODO: DOES A POINT ON THE EDGE RETURN FALSE? IT REALLY SHOULD.
     public function contains(point: Vector): Bool {
-        return this.contains(point, true);
+
+        var p1 = this.points[this.length - 1];
+
+        for (p2 in this.points) {
+            @:privateAccess
+            if (this.side(p1, p2, point) <= 0) return false;
+            p1 = p2;
+        }
+
+        return true;
     }
 
     /** 

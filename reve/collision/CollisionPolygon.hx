@@ -35,7 +35,16 @@ class CollisionPolygon implements ICollisionShape {
     }
 
     public function collidesWith(other: ICollisionShape): Bool {
-        return false;
+        switch (other.shapeType) {
+            case ShapeType.point(p):
+                return polygon.contains(p.vector);
+            case ShapeType.rectangle(r):
+                return polygon.collideBounds(r.rectangle);
+            case ShapeType.circle(c):
+                return c.circle.collidePolygon(polygon);
+            case ShapeType.polygon(g):
+                return polygon.collidePolygon(g.polygon);
+        }
     }
 
     private inline function get_bounds(): Rectangle {
@@ -43,6 +52,6 @@ class CollisionPolygon implements ICollisionShape {
     }
 
     private inline function get_shapeType(): ShapeType {
-        return null;
+        return ShapeType.polygon(this);
     }
 }

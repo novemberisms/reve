@@ -1,5 +1,7 @@
 package reve.test.cases;
 
+import reve.math.Polygon;
+import reve.collision.CollisionPolygon;
 import reve.collision.CollisionPoint;
 import reve.collision.CollisionCircle;
 import reve.collision.CollisionRectangle;
@@ -23,6 +25,7 @@ class TestCollision extends Test {
         final rect = new CollisionRectangle(new Rectangle(Vector.zero, Vector.one));
         final circ = new CollisionCircle(new Circle(Vector.one * 100, 10));
         final point = new CollisionPoint(new Vector(100, 100));
+        final polygon = new CollisionPolygon(new Polygon([Vector.up, Vector.right, Vector.down]));
 
         world.add(rect);
         world.add(circ);
@@ -30,6 +33,12 @@ class TestCollision extends Test {
         Assert.isTrue(world.has(rect));
         Assert.isTrue(world.has(circ));
         Assert.isFalse(world.has(point));
+        Assert.isFalse(world.has(polygon));
 
+        world.add(point);
+        world.add(polygon);
+
+        Assert.isTrue(world.has(point));
+        Assert.isTrue(world.has(polygon));
     }
 }

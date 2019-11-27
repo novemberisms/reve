@@ -5,13 +5,18 @@ import h2d.col.Polygon as HeapsPolygon;
 abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
 
     public var bounds(get, never): Rectangle;
+    /** Gets a copy of the points in this polygon. Modifying the returned value will not affect the polygon. */
+    public var points(get, never): Array<Vector>;
     public var centroid(get, set): Vector;
 
     public function new(points: Array<Vector>) {
         this = new HeapsPolygon(points);
+#if !skipAsserts
+        if (!this.isConvex()) throw "Only supports convex polygons";
+        if (!this.isClockwise()) throw "Only supports clockwise polygons";
+#end
     }
 
-    // TODO: DOES A POINT ON THE EDGE RETURN FALSE? IT REALLY SHOULD.
     public function contains(point: Vector): Bool {
 
         var p1 = this.points[this.length - 1];
@@ -30,7 +35,7 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
      * If the point is inside, returns zero. 
      * @param point the point to compute distance to
      */
-    public function getDistanceSquared(point: Vector): Float {
+    public inline function getDistanceSquared(point: Vector): Float {
         return this.distanceSq(point, true);
     }
 
@@ -39,7 +44,7 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
      * If the point is outside, returns zero
      * @param point the point to compute distance to
      */
-    public function getDistanceSquaredInside(point: Vector): Float {
+    public inline function getDistanceSquaredInside(point: Vector): Float {
         return this.distanceSq(point, false);
     }
 
@@ -47,7 +52,7 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
      * Returns the closest point on the edges of the polygon to the given point.
      * @param point The point with which to find the closest point to.
      */
-    public function getClosestPointOnEdgeTo(point: Vector): Vector {
+    public inline function getClosestPointOnEdgeTo(point: Vector): Vector {
         return this.projectPoint(point);
     }
 
@@ -65,6 +70,20 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
         if (contains(rect.topright)) return true;
         if (contains(rect.bottomleft)) return true;
         if (contains(rect.bottomright)) return true;
+
+        return false;
+    }
+
+    public function collidePolygon(other: Polygon): Bool {
+        // check each point within this polygon to see if any of them are contained in the other polygon\
+        for (point in this) {
+            if (other.contains(point)) return true;
+        }
+
+        // check each point within the other polygon to see if any of them are contained within this one
+        for (point in other.points) {
+            if (contains(point)) return true;
+        }
 
         return false;
     }
@@ -88,5 +107,13 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
         }
 
         return v;
+    }
+
+    private inline function get_points(): Array<Vector> {
+        final copy = new Array<Vector>();
+
+        for (point in this) copy.push(point.clone());
+
+        return copy;
     }
 }

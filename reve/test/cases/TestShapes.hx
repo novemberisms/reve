@@ -54,8 +54,8 @@ class TestShapes extends Test {
     }
 
     function testPointPolyOverlap() {
-        // final polygon = CollisionPolygon.from([Vector.zero, Vector.right, Vector.down]);
-        final polygon = CollisionPolygon.from([Vector.zero, Vector.down, Vector.right]);
+        final polygon = CollisionPolygon.from([Vector.zero, Vector.right, Vector.down]);
+        
         overlapTest(CollisionPoint.from(0, 0), polygon, false, "gp0");
         overlapTest(CollisionPoint.from(0.5, 0), polygon, false, "gp1");
         overlapTest(CollisionPoint.from(1, 0), polygon, false, "gp2");

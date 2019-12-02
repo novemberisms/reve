@@ -26,6 +26,7 @@ class Animation extends Drawable {
     }
 
     public inline function clone(): Animation {
+        
         return new Animation(frames, timer.frequency, looping);
     }
 

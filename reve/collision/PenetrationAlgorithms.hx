@@ -189,7 +189,7 @@ class PenetrationAlgorithms {
 		// if the bounds collide, then the Separating Axis cannot be among the rectangle's two axes.
 		// therefore, we only need to check the axes defined by the sides of the polygon
 
-        for (segment in p.toSegments()) {
+        for (normal in p.getNormals()) {
             
         }
 

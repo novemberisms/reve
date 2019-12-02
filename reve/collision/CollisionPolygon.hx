@@ -1,5 +1,6 @@
 package reve.collision;
 
+import reve.util.Bitflag;
 import reve.math.Rectangle;
 import reve.math.Polygon;
 import reve.math.Vector;
@@ -9,8 +10,8 @@ class CollisionPolygon implements ICollisionShape {
     public final polygon: Polygon;
     public final ownerID: CollisionShapeOwnerID;
 
-    public var collisionLayers = 0x1;
-    public var collisionMask = 0x1;
+    public var collisionLayers = new Bitflag(0x1);
+    public var collisionMask = new Bitflag(0x1);
 
     public var bounds(get, never): Rectangle;
     public var shapeType(get, never): ShapeType;

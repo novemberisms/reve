@@ -36,7 +36,7 @@ abstract CollisionWorld(SpatialHash<ICollisionShape>) {
         // if both shapes belong to the same owner, then do not check collision
         if (shapeA.ownerID == shapeB.ownerID) return false;
         
-        if (shapeA.collisionMask & shapeB.collisionLayers == 0) return false; 
+        if (!shapeB.collisionLayers.testAny(shapeA.collisionMask)) return false; 
 
         return true;
     }

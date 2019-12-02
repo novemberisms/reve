@@ -2,11 +2,13 @@ package reve.math;
 
 import h2d.col.Polygon as HeapsPolygon;
 
+@:forward(toSegments, area)
 abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
 
     public var bounds(get, never): Rectangle;
     /** Gets a copy of the points in this polygon. Modifying the returned value will not affect the polygon. */
     public var points(get, never): Array<Vector>;
+
     public var centroid(get, set): Vector;
 
     public function new(points: Array<Vector>) {
@@ -17,6 +19,8 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
 #end
     }
 
+    /** Returns whether the given point is contained within the polygon. If the point lies on the
+        edge, it is not considered contained. **/
     public function contains(point: Vector): Bool {
 
         var p1 = this.points[this.length - 1];
@@ -28,6 +32,30 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
         }
 
         return true;
+    }
+
+    /** Returns the normal vectors for each side in this polygon. The vectors will point outwards from the center of the 
+        polygon and will be all unit vectors. There is no guaranteed order to the sides except that they will be clockwise. **/
+    public function getNormals(): Array<Vector> {
+        final normals = new Array<Vector>();
+
+        // cast this to an array of vectors from an array of points
+        final myPoints: Array<Vector> = this;
+
+        var p1 = myPoints[myPoints.length - 1];
+        
+        for (p2 in myPoints) {
+            final sideVec = p2 - p1;
+            // since polygons can only be clockwise, then to get the normal of this side, we only need to find the vector pointing 
+            // outwards, which will be if the vector is rotated 90 degrees counter-clockwise
+            final outward = sideVec.perpendicularCounterClockwise();
+
+            normals.push(outward.normalized);
+
+            p1 = p2;
+        }
+
+        return normals;
     }
 
     /** 

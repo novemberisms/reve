@@ -57,6 +57,10 @@ class PenetrationAlgorithms {
         return Vector.zero;
     }
 
+	// =========================================================================
+	// VECTOR METHODS
+	// =========================================================================
+
     private static inline function vecVec(v1: Vector, v2: Vector): Vector {
         return Vector.zero;
     }
@@ -102,6 +106,10 @@ class PenetrationAlgorithms {
         final closestPoint = p.getClosestPointOnEdgeTo(v);
         return v - closestPoint;
     }
+
+	// =========================================================================
+	// RECT METHODS
+	// =========================================================================
 
     // TODO: test
     private static function rectRect(r1: Rectangle, r2: Rectangle): Vector {
@@ -174,7 +182,27 @@ class PenetrationAlgorithms {
 
     // TODO
     private static function rectPoly(r: Rectangle, p: Polygon): Vector {
-        if (!p.collideBounds(r)) return Vector.zero;
+        final polygonBounds = p.bounds;
+
+        if (!polygonBounds.intersects(r)) return Vector.zero;
+
+		// if the bounds collide, then the Separating Axis cannot be among the rectangle's two axes.
+		// therefore, we only need to check the axes defined by the sides of the polygon
+
+        for (segment in p.toSegments()) {
+            
+        }
+
+
+
+        // since the bounds of the polygon do intersect with the rectangle, then we know for sure
+        // that no separating axis can be found among the x and y axes. However, in order to compute the
+        // minimum penetration later on (in case of collision), we need to find the overlap of the polygon's bounds
+        // with the rectangle's bounds wrt the x and y axes.
+
+		final xPenetration = computeProjectionOverlap(r.xMin, r.xMax, polygonBounds.xMin, polygonBounds.xMax);
+        final yPenetration = computeProjectionOverlap(r.yMin, r.yMax, polygonBounds.yMin, polygonBounds.yMax);
+
 
         // use the Separating axis theorem to check if they actually do intersect.
         // then, find the axis with the least overlap and return a vector normal to that 
@@ -182,6 +210,10 @@ class PenetrationAlgorithms {
 
         return Vector.zero;
     }
+
+	// =========================================================================
+    // CIRCLE METHODS
+	// =========================================================================
 
     // TODO: test
     private static function circCirc(c1: Circle, c2: Circle): Vector {
@@ -199,15 +231,38 @@ class PenetrationAlgorithms {
         return Vector.zero;
     }
 
+	// =========================================================================
+    // POLYGON METHODS
+	// =========================================================================
+
     // TODO
     private static function polyPoly(p1: Polygon, p2: Polygon): Vector {
         return Vector.zero;
     }
 
+	// =========================================================================
+    // HELPER METHODS
+	// =========================================================================
+
     /** Helper function for rectCirc */
     private static inline function cornerPenetration(center: Vector, radius: Float, corner: Vector): Vector {
         final toCenter = center - corner;
         return (toCenter.normalized * radius) - toCenter;
+    }
+
+    /** Helper function for polygon methods. Assuming no separation can be found along the axis, returns the overlap 
+        of the projections of A and B unto the axis. Returns a positive float if the penetration of A in B points towards the max
+        value, and returns a negative float if the penetration of A in B points towards the min value. **/
+    private static inline function computeProjectionOverlap(minA: Float, maxA: Float, minB: Float, maxB: Float): Float {
+        final aRight = maxA - minB;
+        final aLeft = maxB - minA;
+        return aRight <= aLeft ? aRight : -aLeft;
+    }
+
+    private static inline function hasProjectionOverlap(minA: Float, maxA: Float, minB: Float, maxB: Float): Bool {
+        if (minA >= maxB) return false;
+        if (maxA <= minB) return false;
+        return true;
     }
 
 }

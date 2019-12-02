@@ -35,6 +35,19 @@ abstract Vector(Point) from Point to Point {
         return new Vector(x * cos - y * sin, x * sin + y * cos);
     }
 
+    public inline function perpendicularClockwise(): Vector {
+        return new Vector(-y, x);
+    }
+
+    public inline function perpendicularCounterClockwise(): Vector {
+        return new Vector(y, -x);
+    }
+
+    public inline function projectionOn(other: Vector): Float {
+        final dotProduct = this.dot(other);
+        return dotProduct / other.length;
+    }
+
     public function closeEnough(v: Vector, epsilon: Float = 0.001): Bool {
         if (Math.abs(x - v.x) > epsilon) return false;
         if (Math.abs(y - v.y) > epsilon) return false;

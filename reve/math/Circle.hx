@@ -27,6 +27,12 @@ abstract Circle(HeapsCircle) from HeapsCircle to HeapsCircle {
     public inline function collidePolygon(polygon: Polygon): Bool {
         return polygon.getDistanceSquared(center) < radius * radius;
     }
+    
+    public inline function getClosestPointOnEdgeTo(point: Vector): Vector {
+        final disp = point - center;
+        if (disp.lengthSq == 0) return center + Vector.up * radius;
+        return center + disp.normalized * radius;
+    }
 
     private inline function get_center(): Vector {
         return new Vector(this.x, this.y);

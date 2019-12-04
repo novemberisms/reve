@@ -128,6 +128,58 @@ abstract Rectangle(Bounds) from Bounds to Bounds {
         return result.fitInside(container);
     }
 
+    public function getClosestPointOnEdgeTo(point: Vector): Vector {
+        if (point.x <= this.xMin) {
+            // left side of the rectangle
+            if (point.y <= this.yMin) {
+                return topleft;
+            } else if (point.y >= this.yMax) {
+                return bottomleft;
+            } else {
+                return new Vector(this.xMin, point.y);
+            }
+        } else if (point.x >= this.xMax) {
+            // right side of the rectangle
+            if (point.y <= this.yMin) {
+                return topright;
+            } else if (point.y >= this.yMax) {
+                return bottomright;
+            } else {
+                return new Vector(this.xMax, point.y);
+            }
+        } else {
+            // between the left and right sides
+            if (point.y <= this.yMin) {
+                return new Vector(point.x, this.yMin);
+            } else if (point.y >= this.yMax) {
+                return new Vector(point.x, this.yMax);
+            } else {
+                // the test point is within the rectangle.
+
+                // code derived from PenetrationAlgorithms.vecRect
+                final distToLeft = point.x - this.xMin;
+                final distToRight = this.xMax - point.x;
+                final distToTop = point.y - this.yMin;
+                final distToBottom = this.yMax - point.y;
+
+                final lowest = Math.min(
+                    Math.min(distToLeft, distToRight),
+                    Math.min(distToTop, distToBottom)
+                );
+
+                if (lowest == distToTop) return new Vector(point.x, this.yMin);
+                if (lowest == distToBottom) return new Vector(point.x, this.yMax);
+                if (lowest == distToLeft) return new Vector(this.xMin, point.y);
+
+                return new Vector(this.xMax, point.y);
+            }
+        }
+    }
+
+    public function corners(): Array<Vector> {
+        return [topleft, topright, bottomright, bottomleft];
+    }
+
     public function toString(): String {
         return 'Rectangle{From: $topleft, To: $bottomright, Size: $size}';
     }

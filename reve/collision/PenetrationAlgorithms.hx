@@ -180,35 +180,37 @@ class PenetrationAlgorithms {
         }
     }
 
-    // TODO
+    // TODO: test
     private static function rectPoly(r: Rectangle, p: Polygon): Vector {
-        final polygonBounds = p.bounds;
+        // if the bounds do not intersect, there is no chance of collision
+        if (!r.intersects(p.bounds)) return Vector.zero;
 
-        if (!polygonBounds.intersects(r)) return Vector.zero;
+        var leastDistanceSquared = Math.POSITIVE_INFINITY;
+        var leastPenetration = Vector.zero;
 
-		// if the bounds collide, then the Separating Axis cannot be among the rectangle's two axes.
-		// therefore, we only need to check the axes defined by the sides of the polygon
-
-        for (normal in p.getNormals()) {
-            
+        for (polycorner in p.points) {
+            if (r.contains(polycorner)) {
+                final closestOnRect = r.getClosestPointOnEdgeTo(polycorner);
+                final penetration = closestOnRect - polycorner;
+                if (penetration.lengthSq < leastDistanceSquared) {
+                    leastDistanceSquared = penetration.lengthSq;
+                    leastPenetration = penetration;
+                }
+            }
         }
 
+        for (rectcorner in r.corners()) {
+            if (p.contains(rectcorner)) {
+                final closestOnPoly = p.getClosestPointOnEdgeTo(rectcorner);
+                final penetration = rectcorner - closestOnPoly;
+                if (penetration.lengthSq < leastDistanceSquared) {
+                    leastDistanceSquared = penetration.lengthSq;
+                    leastPenetration = penetration;
+                }
+            }
+        }
 
-
-        // since the bounds of the polygon do intersect with the rectangle, then we know for sure
-        // that no separating axis can be found among the x and y axes. However, in order to compute the
-        // minimum penetration later on (in case of collision), we need to find the overlap of the polygon's bounds
-        // with the rectangle's bounds wrt the x and y axes.
-
-		final xPenetration = computeProjectionOverlap(r.xMin, r.xMax, polygonBounds.xMin, polygonBounds.xMax);
-        final yPenetration = computeProjectionOverlap(r.yMin, r.yMax, polygonBounds.yMin, polygonBounds.yMax);
-
-
-        // use the Separating axis theorem to check if they actually do intersect.
-        // then, find the axis with the least overlap and return a vector normal to that 
-        // axis pointing inwards whose magnitude is the found least overlap
-
-        return Vector.zero;
+        return leastPenetration;
     }
 
 	// =========================================================================

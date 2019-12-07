@@ -7,7 +7,6 @@ import reve.math.algorithms.SeparatingAxis;
 abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
 
     public var bounds(get, never): Rectangle;
-    /** Gets a copy of the points in this polygon. Modifying the returned value will not affect the polygon. */
     public var points(get, never): Array<Vector>;
 
     public var centroid(get, set): Vector;
@@ -131,6 +130,13 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
         return false;
     }
 
+    public function translate(translation: Vector) {
+        for (p in this) {
+            p.x += translation.x;
+            p.y += translation.y;
+        }
+    }
+
     private inline function get_bounds(): Rectangle {
         return this.getBounds();
     }
@@ -144,19 +150,12 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
 
         final offset = v - currentCenter;
 
-        for (p in this) {
-            p.x += offset.x;
-            p.y += offset.y;
-        }
+        translate(offset);
 
         return v;
     }
 
     private inline function get_points(): Array<Vector> {
-        final copy = new Array<Vector>();
-
-        for (point in this) copy.push(point.clone());
-
-        return copy;
+        return this;
     }
 }

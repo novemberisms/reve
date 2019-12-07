@@ -55,7 +55,6 @@ class PenetrationAlgorithms {
                         return polyPoly(gA.polygon, gB.polygon);
 				}
         }
-        return Vector.zero;
     }
 
 	// =========================================================================
@@ -208,19 +207,15 @@ class PenetrationAlgorithms {
             final pProj = SeparatingAxis.getShadow(polyPoints, normal);
 
             if (SeparatingAxis.testForSeparatingAxis(
-                rProj.min,
-                rProj.max,
-                pProj.min,
-                pProj.max
+                rProj.min, rProj.max,
+                pProj.min, pProj.max
             )) {
                 return Vector.zero;
             }
 
             final overlap = SeparatingAxis.getOverlap(
-                rProj.min,
-                rProj.max,
-                pProj.min,
-                pProj.max
+                rProj.min, rProj.max,
+                pProj.min, pProj.max
             );
 
             if (Math.abs(overlap) >= leastOverlap) continue;
@@ -264,19 +259,15 @@ class PenetrationAlgorithms {
             final polyProj = SeparatingAxis.getShadow(polyPoints, normal);
 
             if (SeparatingAxis.testForSeparatingAxis(
-                circMin,
-                circMax,
-                polyProj.min,
-                polyProj.max
+                circMin, circMax,
+                polyProj.min, polyProj.max
             )) {
                 return Vector.zero;
             }
 
             final overlap = SeparatingAxis.getOverlap(
-                circMin,
-                circMax,
-                polyProj.min,
-                polyProj.max
+                circMin, circMax,
+                polyProj.min, polyProj.max
             );
 
             if (Math.abs(overlap) >= leastOverlap) continue;
@@ -296,10 +287,8 @@ class PenetrationAlgorithms {
 			final polyProj = SeparatingAxis.getShadow(polyPoints, axis);
 
 			final overlap = SeparatingAxis.getOverlap(
-                circMin,
-                circMax,
-                polyProj.min,
-                polyProj.max
+                circMin, circMax,
+                polyProj.min, polyProj.max
             );
 
             if (Math.abs(overlap) < leastOverlap) {
@@ -317,7 +306,57 @@ class PenetrationAlgorithms {
 
     // TODO
     private static function polyPoly(p1: Polygon, p2: Polygon): Vector {
-        return Vector.zero;
+        var penetration = Vector.zero;
+        var leastOverlap = Math.POSITIVE_INFINITY;
+        
+        final points1 = p1.points;
+        final points2 = p2.points;
+
+        for (normal in p1.getNormals()) {
+            final p1Proj = SeparatingAxis.getShadow(points1, normal);
+            final p2Proj = SeparatingAxis.getShadow(points2, normal);
+
+            if (SeparatingAxis.testForSeparatingAxis(
+                p1Proj.min, p1Proj.max,
+                p2Proj.min, p2Proj.max
+            )) {
+                return Vector.zero;
+            }
+
+            final overlap = SeparatingAxis.getOverlap(
+                p2Proj.min, p2Proj.max,
+                p1Proj.min, p1Proj.max
+            );
+
+            if (Math.abs(overlap) >= leastOverlap) continue;
+
+            leastOverlap = Math.abs(overlap);
+            penetration = overlap * normal;
+        }
+
+        for (normal in p2.getNormals()) {
+            final p1Proj = SeparatingAxis.getShadow(points1, normal);
+            final p2Proj = SeparatingAxis.getShadow(points2, normal);
+
+            if (SeparatingAxis.testForSeparatingAxis(
+                p1Proj.min, p1Proj.max,
+                p2Proj.min, p2Proj.max
+            )) {
+                return Vector.zero;
+            }
+
+            final overlap = SeparatingAxis.getOverlap(
+                p2Proj.min, p2Proj.max,
+                p1Proj.min, p1Proj.max
+            );
+
+            if (Math.abs(overlap) >= leastOverlap) continue;
+
+            leastOverlap = Math.abs(overlap);
+            penetration = overlap * normal;
+        }
+
+        return penetration;
     }
 
 	// =========================================================================

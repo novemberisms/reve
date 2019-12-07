@@ -137,6 +137,24 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
         }
     }
 
+    public function rotate(angle: Float, origin: Vector) {
+        for (p in this) {
+            final diff = p - origin;
+            final newPos = origin + diff.rotated(angle);
+            p.x = newPos.x;
+            p.y = newPos.y;
+        }
+    }
+
+    public function scale(value: Vector, origin: Vector) {
+        for (p in this) {
+            final diff = p - origin;
+            final newPos = origin + diff * value;
+            p.x = newPos.x;
+            p.y = newPos.y;
+        }
+    }
+
     private inline function get_bounds(): Rectangle {
         return this.getBounds();
     }

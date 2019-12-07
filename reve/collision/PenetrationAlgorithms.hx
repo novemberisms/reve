@@ -1,5 +1,6 @@
 package reve.collision;
 
+import reve.math.algorithms.SeparatingAxis;
 import reve.math.Polygon;
 import reve.math.Circle;
 import reve.math.Rectangle;
@@ -182,35 +183,53 @@ class PenetrationAlgorithms {
 
     // TODO: test
     private static function rectPoly(r: Rectangle, p: Polygon): Vector {
-        // if the bounds do not intersect, there is no chance of collision
-        if (!r.intersects(p.bounds)) return Vector.zero;
+        final polyBounds = p.bounds;
 
-        var leastDistanceSquared = Math.POSITIVE_INFINITY;
-        var leastPenetration = Vector.zero;
+        if (!r.intersects(polyBounds)) return Vector.zero;
 
-        for (polycorner in p.points) {
-            if (r.contains(polycorner)) {
-                final closestOnRect = r.getClosestPointOnEdgeTo(polycorner);
-                final penetration = closestOnRect - polycorner;
-                if (penetration.lengthSq < leastDistanceSquared) {
-                    leastDistanceSquared = penetration.lengthSq;
-                    leastPenetration = penetration;
-                }
-            }
+        var leastOverlap: Float;
+        var penetration: Vector;
+
+        final rectCorners = r.corners();
+        final polyPoints = p.points;
+
+        final yOverlap = SeparatingAxis.getOverlap(r.yMin, r.yMax, polyBounds.yMin, polyBounds.yMax);
+        penetration = Vector.down * yOverlap;
+        leastOverlap = Math.abs(yOverlap);
+
+        final xOverlap = SeparatingAxis.getOverlap(r.xMin, r.xMax, polyBounds.xMin, polyBounds.xMax);
+        if (Math.abs(xOverlap) < leastOverlap) {
+            penetration = Vector.right * xOverlap;
+            leastOverlap = Math.abs(xOverlap);
         }
 
-        for (rectcorner in r.corners()) {
-            if (p.contains(rectcorner)) {
-                final closestOnPoly = p.getClosestPointOnEdgeTo(rectcorner);
-                final penetration = rectcorner - closestOnPoly;
-                if (penetration.lengthSq < leastDistanceSquared) {
-                    leastDistanceSquared = penetration.lengthSq;
-                    leastPenetration = penetration;
-                }
+        for (normal in p.getNormals()) {
+            final rProj = SeparatingAxis.getShadow(rectCorners, normal);
+            final pProj = SeparatingAxis.getShadow(polyPoints, normal);
+
+            if (SeparatingAxis.testForSeparatingAxis(
+                rProj.min,
+                rProj.max,
+                pProj.min,
+                pProj.max
+            )) {
+                return Vector.zero;
             }
+
+            final overlap = SeparatingAxis.getOverlap(
+                rProj.min,
+                rProj.max,
+                pProj.min,
+                pProj.max
+            );
+
+            if (Math.abs(overlap) >= leastOverlap) continue;
+
+            leastOverlap = Math.abs(overlap);
+            penetration = overlap * normal;
         }
 
-        return leastPenetration;
+        return penetration;
     }
 
 	// =========================================================================
@@ -230,7 +249,66 @@ class PenetrationAlgorithms {
 
     // TODO
     private static function circPoly(c: Circle, p: Polygon): Vector {
-        return Vector.zero;
+
+        var penetration = Vector.zero;
+        var leastOverlap = Math.POSITIVE_INFINITY;
+
+        final polyPoints = p.points;
+
+        for (normal in p.getNormals()) {
+
+            final centerProj = c.center.dot(normal);
+            final circMin = centerProj - c.radius;
+            final circMax = centerProj + c.radius;
+
+            final polyProj = SeparatingAxis.getShadow(polyPoints, normal);
+
+            if (SeparatingAxis.testForSeparatingAxis(
+                circMin,
+                circMax,
+                polyProj.min,
+                polyProj.max
+            )) {
+                return Vector.zero;
+            }
+
+            final overlap = SeparatingAxis.getOverlap(
+                circMin,
+                circMax,
+                polyProj.min,
+                polyProj.max
+            );
+
+            if (Math.abs(overlap) >= leastOverlap) continue;
+
+            leastOverlap = Math.abs(overlap);
+            penetration = overlap * normal;
+        }
+
+		{
+            final corner = p.getClosestCornerTo(c.center);
+			final axis = (corner - c.center).normalized;
+
+			final centerProj = c.center.dot(axis);
+			final circMin = centerProj - c.radius;
+			final circMax = centerProj + c.radius;
+
+			final polyProj = SeparatingAxis.getShadow(polyPoints, axis);
+
+			final overlap = SeparatingAxis.getOverlap(
+                circMin,
+                circMax,
+                polyProj.min,
+                polyProj.max
+            );
+
+            if (Math.abs(overlap) < leastOverlap) {
+                leastOverlap = Math.abs(overlap);
+                penetration = overlap * axis;
+            }
+		}
+
+        return penetration;
     }
 
 	// =========================================================================
@@ -250,21 +328,6 @@ class PenetrationAlgorithms {
     private static inline function cornerPenetration(center: Vector, radius: Float, corner: Vector): Vector {
         final toCenter = center - corner;
         return (toCenter.normalized * radius) - toCenter;
-    }
-
-    /** Helper function for polygon methods. Assuming no separation can be found along the axis, returns the overlap 
-        of the projections of A and B unto the axis. Returns a positive float if the penetration of A in B points towards the max
-        value, and returns a negative float if the penetration of A in B points towards the min value. **/
-    private static inline function computeProjectionOverlap(minA: Float, maxA: Float, minB: Float, maxB: Float): Float {
-        final aRight = maxA - minB;
-        final aLeft = maxB - minA;
-        return aRight <= aLeft ? aRight : -aLeft;
-    }
-
-    private static inline function hasProjectionOverlap(minA: Float, maxA: Float, minB: Float, maxB: Float): Bool {
-        if (minA >= maxB) return false;
-        if (maxA <= minB) return false;
-        return true;
     }
 
 }

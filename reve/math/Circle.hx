@@ -25,6 +25,7 @@ abstract Circle(HeapsCircle) from HeapsCircle to HeapsCircle {
     }
 
     public inline function collidePolygon(polygon: Polygon): Bool {
+        if (polygon.contains(center)) return true;
         return polygon.getDistanceSquared(center) < radius * radius;
     }
     

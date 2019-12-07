@@ -1,6 +1,7 @@
 package reve.math;
 
 import h2d.col.Polygon as HeapsPolygon;
+import reve.math.algorithms.SeparatingAxis;
 
 @:forward(toSegments, area)
 abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
@@ -84,22 +85,36 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
         return this.projectPoint(point);
     }
 
+    public inline function getClosestCornerTo(point: Vector): Vector {
+        return this.findClosestPoint(point, Math.POSITIVE_INFINITY);
+    }
+
     public function collideBounds(rect: Rectangle): Bool {
+
         // if the bounds of this polygon does not even intersect with the rectangle, then there is no chance
         if (!rect.intersects(bounds)) return false;
 
-        // check each point in the polygon if it is contained within the rectangle. If any does, then they are intersecting
-        for (point in this) {
-            if (rect.contains(point)) return true;
-        } 
+        // use the SAT to find a separating axis
+        // since the bounds intersect, then the separating axis cannot be along the x or y axes
 
-        // failing that, check each corner of the rectangle to see if it is contained within the polygon
-        if (contains(rect.topleft)) return true;
-        if (contains(rect.topright)) return true;
-        if (contains(rect.bottomleft)) return true;
-        if (contains(rect.bottomright)) return true;
+        final rectCorners = rect.corners();
 
-        return false;
+        for (normal in getNormals()) {
+            // getting the projection of a vector to a unit vector is as simple as taking the dot product
+            final rectProjection = SeparatingAxis.getShadow(rectCorners, normal);
+            final polyProjection = SeparatingAxis.getShadow(this.points, normal);
+
+            if (SeparatingAxis.testForSeparatingAxis(
+                rectProjection.min, 
+                rectProjection.max, 
+                polyProjection.min, 
+                polyProjection.max
+            )) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function collidePolygon(other: Polygon): Bool {

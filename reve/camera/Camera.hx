@@ -1,5 +1,6 @@
 package reve.camera;
 
+import h2d.Object;
 import reve.game.EngineScene;
 import reve.math.Vector;
 import reve.math.Rectangle;
@@ -30,13 +31,22 @@ class Camera {
         _viewport = rect;
     }
 
-    public function apply(scene: EngineScene) {
-        final scale = getWindowSize() / _viewport.size;
+    /** Applies the camera transformation on the object such that the region in the object
+        corresponding to the camera viewport will take up the entirety of the screen. This does
+        not do any view culling. **/
+    public function apply(object: Object) {
+		final scale = getWindowSize() / _viewport.size;
 
-        final truePosition = -(_viewport.topleft * scale);
+		final truePosition = -(_viewport.topleft * scale);
 
-        scene.gameLayers.setPositionV(truePosition.floor());
-        scene.gameLayers.setScaleV(scale);
+		object.setPositionV(truePosition.floor());
+		object.setScaleV(scale);
+    }
+
+    /** Applies the camera transformation on specifically only the `gameLayers` field of an `EngineScene`
+        while leaving the `guiLayers` unmoving. **/
+    public inline function applyScene(scene: EngineScene) {
+        apply(scene.gameLayers);
     }
 
     private inline function getWindowSize(): Vector {

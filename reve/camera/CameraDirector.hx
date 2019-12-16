@@ -12,6 +12,8 @@ using reve.util.GenericStackExtender;
 
 class CameraDirector {
 
+    public final camera: Camera;
+    
     public var settlingTime = 1.0;
     public var minimumPositionSpeed = 40.0;
     public var minimumSizeSpeed = 40.0;
@@ -27,15 +29,13 @@ class CameraDirector {
 
     private final _window = Window.getInstance();
 
-    private final _camera: Camera;
-
     private var _extrapolator: RectangleExponentialExtrapolator;
     private var _desiredViewport: Rectangle;
     private var _relativeScaleToWindow = 1.0;
 
     public function new(camera: Camera) {
-        _camera = camera;
-        _desiredViewport = _camera.getViewport();
+        this.camera = camera;
+        _desiredViewport = camera.getViewport();
         _extrapolator = makeExtrapolator();
         _window.addResizeEvent(onWindowResize);
     }
@@ -86,16 +86,23 @@ class CameraDirector {
     //-------------------------------------------------------------------------
     // COMMANDS
 
-    public function jumpToDesiredViewport() {
-        _camera.setViewport(_desiredViewport.copy);
+	public function jumpToDesiredViewport() {
+		final target = _targetStack.peek();
+		if (target.exists()) followTarget(target.sure());
+
+        camera.setViewport(_desiredViewport.copy);
         _extrapolator = makeExtrapolator();
     }
 
+    /** Moves the assigned camera in such a way that it follows the current target while taking into consideration 
+        the points of interest and hidden zones. NOTE that you still need to call camera.apply for the changes to be 
+        seen. **/
     public function update(dt: Float) {
         final target = _targetStack.peek();
         if (target.exists()) followTarget(target.sure());
+        
         _extrapolator.update(dt);
-        _camera.setViewport(_extrapolator.value);
+        camera.setViewport(_extrapolator.value);
     }
 
     //-------------------------------------------------------------------------
@@ -151,7 +158,7 @@ class CameraDirector {
 
     private inline function makeExtrapolator(): RectangleExponentialExtrapolator {
         return new RectangleExponentialExtrapolator(
-            _camera.getViewport(),
+            camera.getViewport(),
             _desiredViewport.copy,
             false,
             settlingTime,

@@ -45,6 +45,8 @@ class Game extends App {
 #end
     }
 
+    /** Pops the current state out of the stack. Note that the state just popped and returned has not been disposed yet. 
+        So it must be disposed manually. **/
     public inline function popState(): Maybe<GameState> {
         final previousState = _stateMachine.popState();
         // if there is a state underneath the popped gamestate, then replace the active scene
@@ -52,6 +54,8 @@ class Game extends App {
         return previousState;
     }
 
+    /** Replaces the current state of the stack with the given new state. Note that the state just replaced has not been 
+        disposed yet and must be disposed manually if it won't be used anymore. **/
     public inline function replaceState(newState: GameState): Maybe<GameState> {
         final previousState = _stateMachine.replaceState(newState);
         switchScene(newState.scene);

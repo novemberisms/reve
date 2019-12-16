@@ -11,18 +11,27 @@ import reve.util.JsonReader;
 
 class Level {
 
+    /** How many tiles wide the level is **/
     public final width: Int;
+    /** How many tiles tall the level is **/
     public final height: Int; 
+    /** The width of each individual tile in pixels **/
     public final tileWidth: Int;
+    /** The height of each individual tile in pixels **/
     public final tileHeight: Int;
+    
     public final properties: Properties;
     public final tilesetService: TilesetService;
     public final factory: Factory;
 
+    /** The size of a single individual tile **/
     public var tilesize(get, never): Vector;
+    /** The size in pixels of the entire level **/
     public var pixelsize(get, never): Vector;
+    /** The number of tiles in the grid per dimension **/
     public var gridsize(get, never): Vector;
 
+    /** An array of all the layers in this level. It is arranged from the bottom layer to the top layer. **/
     public var layers(get, never): Array<Layer>;
 
     private final _layerManager: LayerManager;

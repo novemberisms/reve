@@ -74,6 +74,30 @@ class Level {
     public inline function getLayer(name: String): Maybe<Layer> {
         return _layerManager.getByName(name);
     }
+
+    /** Returns the tile layer with the given name. If the layer with the given name
+        does not exist or it is not a tile layer, returns null. **/
+    public function getTileLayer(name: String): Maybe<TileLayer> {
+        final uncastedLayer = _layerManager.getByName(name);
+        if (!uncastedLayer.exists()) return null;
+
+        switch (uncastedLayer.sure().kind) {
+            case tile(tileLayer): return tileLayer;
+            default: return null;
+        } 
+    }
+
+	/** Returns the object layer with the given name. If the layer with the given name
+		does not exist or it is not an object layer, returns null. **/
+    public function getObjectLayer(name: String): Maybe<ObjectLayer> {
+        final uncastedLayer = _layerManager.getByName(name);
+        if (!uncastedLayer.exists()) return null;
+
+        switch (uncastedLayer.sure().kind) {
+            case object(objectLayer): return objectLayer;
+            default: return null;
+        }
+    }
     
     /** Returns a grid position in the level
     

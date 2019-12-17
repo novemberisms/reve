@@ -111,7 +111,8 @@ enum abstract CustomPropertyType(String) {
     and types by name. **/
 abstract Properties(Maybe<Array<CustomProperty>>) {
 
-    public var empty(get, never): Bool;
+    /** Whether the properties are empty. **/
+    public var isEmpty(get, never): Bool;
 
     private function get<T>(name: String): Maybe<T> {
         if (!this.exists()) return null;
@@ -145,7 +146,7 @@ abstract Properties(Maybe<Array<CustomProperty>>) {
         return CustomPropertyType.undefined;
     }
 
-    private inline function get_empty(): Bool {
+    private inline function get_isEmpty(): Bool {
         return !this.exists();
     }
 }

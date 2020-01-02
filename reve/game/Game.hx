@@ -1,5 +1,6 @@
 package reve.game;
 
+import haxe.CallStack.StackItem;
 import h2d.Scene;
 import hxd.App;
 import reve.pushdown.PushdownAutomata;
@@ -17,9 +18,8 @@ class Game extends App {
         try {
             _stateMachine.currentState.sure().update(dt);
         } catch (d: Dynamic) {
-		    final stack = haxe.CallStack.toString(haxe.CallStack.exceptionStack());
-            Sys.print(d.toString());
-            Sys.print(stack);
+		    final stack = haxe.CallStack.exceptionStack();
+            onError(d, stack);
             Sys.exit(1);
         }
 #else 
@@ -32,11 +32,10 @@ class Game extends App {
         try {
             _stateMachine.pushState(newState);
             switchScene(newState.scene);
-        } catch (d: Dynamic) {
-		    final stack = haxe.CallStack.toString(haxe.CallStack.exceptionStack());
-            Sys.print(d.toString());
-            Sys.print(stack);
-            Sys.exit(1);
+		} catch (d: Dynamic) {
+			final stack = haxe.CallStack.exceptionStack();
+			onError(d, stack);
+			Sys.exit(1);
         }
 #else
         _stateMachine.pushState(newState);
@@ -61,6 +60,13 @@ class Game extends App {
         switchScene(newState.scene);
         return previousState;
     }
+
+    @:virtual
+    private function onError(error: Dynamic, stackTrace: Array<StackItem>) {
+		// override me!
+		Sys.print(error.toString());
+		Sys.print(haxe.CallStack.toString(stackTrace));
+    } 
 
     // the following two functions are marked noCompletion because we don't want
     // users of this engine to call them publicly

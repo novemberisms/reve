@@ -1,11 +1,11 @@
 package reve.camera;
 
 import haxe.ds.GenericStack;
-import reve.math.Vector;
-import reve.math.Rectangle;
-import reve.math.Extrapolators;
-import reve.camera.PointOfInterest;
 import hxd.Window;
+import reve.camera.PointOfInterest;
+import reve.math.Extrapolators;
+import reve.math.Rectangle;
+import reve.math.Vector;
 
 using Lambda;
 using reve.util.GenericStackExtender;
@@ -38,6 +38,11 @@ class CameraDirector {
         _desiredViewport = camera.getViewport();
         _extrapolator = makeExtrapolator();
         _window.addResizeEvent(onWindowResize);
+    }
+
+    /** Creates a new CameraDirector with its own default camera. **/
+    public static function withCamera(): CameraDirector {
+        return new CameraDirector(new Camera());
     }
 
     //=========================================================================

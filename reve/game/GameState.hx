@@ -1,6 +1,5 @@
 package reve.game;
 
-import h2d.Scene;
 import reve.camera.Camera;
 import reve.pushdown.IPdaState;
 import reve.input.Input;
@@ -16,7 +15,7 @@ class GameState implements IPdaState {
         this.game = game;
     }
 
-    public function dispose() {
+    @virtual public function dispose() {
         scene.dispose();
     }
 

@@ -1,10 +1,10 @@
 package reve.camera;
 
 import h2d.Object;
-import reve.game.EngineScene;
-import reve.math.Vector;
-import reve.math.Rectangle;
 import hxd.Window;
+import reve.game.EngineScene;
+import reve.math.Rectangle;
+import reve.math.Vector;
 
 using reve.util.ObjectExtender;
 

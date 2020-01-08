@@ -61,7 +61,7 @@ typedef TilesetReference = {
 
 /** Description of a tileset used by the Tiled Map Editor as seen in the tileset JSON files. **/
 typedef TiledTileset = {
-    public var image(default, null): String;
+    public var image(default, null): Maybe<String>;
     public var imageheight(default, null): Int;
     public var imagewidth(default, null): Int;
     public var name(default, null): String;
@@ -83,6 +83,14 @@ typedef TiledTile = {
     public var properties: Properties;
     public var type: Maybe<String>;
     public var animation: Maybe<Array<TileAnimationFrame>>;
+
+    // these only appear when the tileset this tile is part of is a collection of images
+    // (as opposed to a tileset made from a single atlas)
+    public var image: Maybe<String>;
+    public var imageheight: Maybe<Float>;
+    public var imagewidth: Maybe<Float>;
+
+    // TODO: support for collision shapes via the objectgroup property
 }
 
 typedef TileAnimationFrame = {

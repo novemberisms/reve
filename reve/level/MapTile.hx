@@ -66,7 +66,8 @@ class MapTile {
 
     /** Creates an empty map tile. An empty tile does not mean that there is nothing to display;
         it just denotes a tile that has no special properties. It still has a corresponding
-        sprite in the tileset which is displayed normally. **/
+        sprite in the tileset which is displayed normally. Tilesets that are collections of images
+        will not have any empty maptiles. **/
     public static inline function empty(
         id: Int, 
         tileset: Tileset, 
@@ -76,7 +77,10 @@ class MapTile {
             id: id,
             type: "",
             properties: null,
-            animation: null
+            animation: null,
+            image: null,
+            imagewidth: null,
+            imageheight: null,
         }, tileset, createTileFn, null);
     }
 

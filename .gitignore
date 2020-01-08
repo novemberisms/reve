@@ -1,1 +1,5 @@
 Test.hl
+
+# i made a res folder because modules that use hxd.Res would complain and
+# not do any error checking if a res/ folder does not exist in the repository
+res 

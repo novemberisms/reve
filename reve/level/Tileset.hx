@@ -11,14 +11,16 @@ using reve.util.PathExtender;
 
 class Tileset {
 
-    /** The image atlas turned into a h2d.Tile. This is lazy-loaded **/
-    public var atlas(get, never): h2d.Tile;
+    /** The image atlas turned into a h2d.Tile. This is lazy-loaded. May be null if
+        the tileset uses a collection of images instead of an atlas. **/
+    public var atlas(get, never): Maybe<h2d.Tile>;
 
     public final name: String;
     public final tilewidth: Int;
     public final tileheight: Int;
     public final columns: Int;
     public final tilecount: Int;
+    public final isAtlas: Bool;
 
     public var tilesize(get, never): Vector;
 
@@ -26,7 +28,7 @@ class Tileset {
     private final _animations: Map<Int, Animation> = [];
 
     private var _atlas: Maybe<h2d.Tile>;
-    private final _atlasPath: String;
+    private var _atlasPath: Maybe<String>;
 
     /** `data` is a Tiled Map editor JSON tileset. **/
     public function new(data: Resource) {
@@ -39,26 +41,14 @@ class Tileset {
         tileheight = tilesetData.tileheight;
         columns = tilesetData.columns;
         tilecount = tilesetData.tilecount;
+        
 
-        // keep the atlas path so that once atlas needs to be lazy-loaded in,
-        // we can fetch it
-        _atlasPath = tilesetPath.applyRelativeString(tilesetData.image);
+        isAtlas = tilesetData.image.exists();
 
-        // create a populated MapTile for each tile data in the tileset
-        if (tilesetData.tiles.exists()) {
-            for (tile in tilesetData.tiles.sure()) {
-
-                final createAnimationFn: Maybe<Void -> Animation> = tile.animation.exists()
-                    ? () -> createAnimation(tile.id, tile.animation.sure())
-                    : null;
-
-                _tiles[tile.id] = new MapTile(
-                    tile, 
-                    this, 
-                    () -> createTile(tile.id), 
-                    createAnimationFn
-                );
-            }
+        if (isAtlas) {
+            setupAsAtlas(tilesetData, tilesetPath);
+        } else {
+            setupAsCollection(tilesetData, tilesetPath);
         }
     }
 
@@ -86,13 +76,59 @@ class Tileset {
         return null;
     }
 
+    private function setupAsAtlas(tilesetData: TiledTileset, tilesetPath: String) {
+
+        // keep the atlas path so that once atlas needs to be lazy-loaded in,
+        // we can fetch it
+        _atlasPath = tilesetPath.applyRelativeString(tilesetData.image.sure());
+
+        if (!tilesetData.tiles.exists()) return;
+        
+        // create a populated MapTile for each tile data in the tileset
+        for (tile in tilesetData.tiles.sure()) {
+
+            final createAnimationFn: Maybe<Void -> Animation> = tile.animation.exists()
+                ? () -> createAnimation(tile.id, tile.animation.sure())
+                : null;
+
+            _tiles[tile.id] = new MapTile(
+                tile, 
+                this, 
+                () -> createTile(tile.id), 
+                createAnimationFn
+            );
+        }
+    }
+
+    private function setupAsCollection(tilesetData: TiledTileset, tilesetPath: String) {
+        if (!tilesetData.tiles.exists()) return;
+
+        for (tile in tilesetData.tiles.sure()) {
+            
+            final createAnimationFn: Maybe<Void -> Animation> = tile.animation.exists()
+                ? () -> createAnimation(tile.id, tile.animation.sure())
+                : null;
+
+            _tiles[tile.id] = new MapTile(
+                tile, 
+                this, 
+                () -> createTile(tile.id), 
+                createAnimationFn
+            );
+        }
+    }
+
     /** This method is passed down to each MapTile's constructor in order for the 
         map tile to be able to lazily construct its own h2d.Tile. This is necessary
         to preserve the one-way flow of data from tileset to tile **/
     private inline function createTile(id: Int): h2d.Tile {
-        final gx = id % columns;
-        final gy = Std.int(id / columns);
-        return atlas.sub(gx * tilewidth, gy * tileheight, tilewidth, tileheight);
+        if (isAtlas) {
+            final gx = id % columns;
+            final gy = Std.int(id / columns);
+            return atlas.sure().sub(gx * tilewidth, gy * tileheight, tilewidth, tileheight);
+        } else {
+            return Res.load(path)
+        }
     }
 
     private inline function createAnimation(id: Int, animationFrames: Array<TileAnimationFrame>): Animation {
@@ -108,11 +144,14 @@ class Tileset {
         return new Vector(tilewidth, tileheight);
     }
 
-    private inline function get_atlas(): h2d.Tile {
+    private inline function get_atlas(): Maybe<h2d.Tile >{
+        if (!isAtlas) return null;
+
         if (!_atlas.exists()) {
-            _atlas = Res.load(_atlasPath).toTile();
+            _atlas = Res.load(_atlasPath.sure()).toTile();
         }
-        return _atlas.sure();
+
+        return _atlas;
     }
 
 }

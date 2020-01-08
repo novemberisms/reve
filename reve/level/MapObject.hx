@@ -62,7 +62,7 @@ class TileObject extends MapObject {
 
         this.maptile = maptile;
         size = new Vector(data.width, data.height);
-        scale = size / new Vector(maptile.tileset.tilewidth, maptile.tileset.tileheight);
+        scale = size / maptile.size;
         position = new Vector(
             data.x + data.height * Math.sin(rotation),
             data.y - data.height * Math.cos(rotation)

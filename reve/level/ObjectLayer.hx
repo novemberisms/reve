@@ -50,7 +50,7 @@ class ObjectLayer extends Layer {
             switch (spawnCommand) {
             case allow:
                 final maptile = obj.maptile;
-                final tilegroup = getTileGroupFor(maptile.tileset);
+                final tilegroup = getTileGroupFor(maptile);
                 tilegroup.addTransform(obj.position.x, obj.position.y, obj.scale.x, obj.scale.y, obj.rotation, maptile.tile);
             case prevent:
                 // do nothing

@@ -14,6 +14,7 @@ class Tileset {
     /** The image atlas turned into a h2d.Tile. This is lazy-loaded. May be null if
         the tileset uses a collection of images instead of an atlas. **/
     public var atlas(get, never): Maybe<h2d.Tile>;
+    public var atlasPath: Maybe<String>;
 
     public final name: String;
     public final tilewidth: Int;
@@ -26,14 +27,19 @@ class Tileset {
 
     private final _tiles: Map<Int, MapTile> = [];
     private final _animations: Map<Int, Animation> = [];
+    private final _tiledTileData: Map<Int, TiledTile> = [];
 
     private var _atlas: Maybe<h2d.Tile>;
-    private var _atlasPath: Maybe<String>;
+
+    private final _tilesetPath: String;
+
+    private final _tileImagePaths: Map<Int, String> = [];
 
     /** `data` is a Tiled Map editor JSON tileset. **/
     public function new(data: Resource) {
 
-        final tilesetPath = data.entry.path;
+        _tilesetPath = data.entry.path;
+
         final tilesetData: TiledTileset = JsonReader.load(data);
 
         name = tilesetData.name;
@@ -42,13 +48,20 @@ class Tileset {
         columns = tilesetData.columns;
         tilecount = tilesetData.tilecount;
         
+        // save the "tiles" array from the tileset data to a map since we're going to
+        // need to reference it in `createTile`
+        if (tilesetData.tiles.exists()) {
+            for (tile in tilesetData.tiles.sure()) {
+                _tiledTileData[tile.id] = tile;
+            }
+        }
 
         isAtlas = tilesetData.image.exists();
 
         if (isAtlas) {
-            setupAsAtlas(tilesetData, tilesetPath);
+            setupAsAtlas(tilesetData);
         } else {
-            setupAsCollection(tilesetData, tilesetPath);
+            setupAsCollection(tilesetData);
         }
     }
 
@@ -57,11 +70,18 @@ class Tileset {
         return _tiles[id];
     }
 
+    /** Returns a path (relative to src/) to the image associated with the tile id. If this is an atlas tileset, this will be the path to the atlas.
+        Otherwise, it will be a path to the image for that tile. */
+    public inline function getSourceImagePath(id: Int): Maybe<String> {
+        if (isAtlas) return atlasPath;
+        return _tileImagePaths[id];
+    } 
+
     /** Returns a list of map tiles in this tileset which correspond to Tiled tiles
         whose properties match the given filter function.  **/
     public inline function tilesWhere(filter: MapTile -> Bool): Array<MapTile> {
         final result: Array<MapTile> = [];
-        for (id => tile in _tiles) {
+        for (_ => tile in _tiles) {
             if (filter(tile)) result.push(tile);
         }
         return result;
@@ -70,17 +90,17 @@ class Tileset {
     /** Similar to `tilesWhere`, but only returns the first tile it can find that
         matches `filter`. Can return null if no tiles match the filter. **/
     public function tileWhere(filter: MapTile -> Bool): Maybe<MapTile> {
-        for (id => tile in _tiles) {
+        for (_ => tile in _tiles) {
             if (filter(tile)) return tile;
         }
         return null;
     }
 
-    private function setupAsAtlas(tilesetData: TiledTileset, tilesetPath: String) {
+    private function setupAsAtlas(tilesetData: TiledTileset) {
 
         // keep the atlas path so that once atlas needs to be lazy-loaded in,
         // we can fetch it
-        _atlasPath = tilesetPath.applyRelativeString(tilesetData.image.sure());
+        atlasPath = _tilesetPath.applyRelativeString(tilesetData.image.sure());
 
         if (!tilesetData.tiles.exists()) return;
         
@@ -100,11 +120,14 @@ class Tileset {
         }
     }
 
-    private function setupAsCollection(tilesetData: TiledTileset, tilesetPath: String) {
+    private function setupAsCollection(tilesetData: TiledTileset) {
         if (!tilesetData.tiles.exists()) return;
 
         for (tile in tilesetData.tiles.sure()) {
             
+            final pathToImage = _tilesetPath.applyRelativeString(tile.image.sure());
+            _tileImagePaths[tile.id] = pathToImage;
+
             final createAnimationFn: Maybe<Void -> Animation> = tile.animation.exists()
                 ? () -> createAnimation(tile.id, tile.animation.sure())
                 : null;
@@ -127,7 +150,9 @@ class Tileset {
             final gy = Std.int(id / columns);
             return atlas.sure().sub(gx * tilewidth, gy * tileheight, tilewidth, tileheight);
         } else {
-            return Res.load(path)
+            final tiledata = _tiledTileData[id];
+            final pathToImage = _tilesetPath.applyRelativeString(tiledata.image.sure());
+            return Res.load(pathToImage).toTile();
         }
     }
 
@@ -148,12 +173,11 @@ class Tileset {
         if (!isAtlas) return null;
 
         if (!_atlas.exists()) {
-            _atlas = Res.load(_atlasPath.sure()).toTile();
+            _atlas = Res.load(atlasPath.sure()).toTile();
         }
 
         return _atlas;
     }
-
 }
 
 

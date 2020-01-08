@@ -42,8 +42,10 @@ class Layer {
 
     /** A bottom-up reference to the level containing this layer **/
     private final _level: Level;
-    /** Map of the tileset names to their corresponding tilegroup for this layer **/
-    private final _tilegroups: Map<String, TileGroup> = [];
+
+    /** Map of image paths (relative to src/) to their corresponding tilegroup for this layer **/
+    private final _tilegroupsPerImage: Map<String, TileGroup> = [];
+
     /** Map of animation indexes to animations. For TileLayers, the index is the index of the tile
         in its big array of data values. For ObjectLayers, the index is the index of the TiledObject
         in its list of TiledObjects. **/
@@ -140,17 +142,25 @@ class Layer {
     // HELPER FUNCTIONS
     //=========================================================================
 
-    private inline function getTileGroupFor(tileset: Tileset): TileGroup {
-        if (_tilegroups[tileset.name] == null) {
-            _tilegroups[tileset.name] = new TileGroup(tileset.atlas);
+    private inline function getTileGroupFor(tile: MapTile): TileGroup {
+
+        final tileset = tile.tileset;
+
+        final imageOrAtlasPath = tileset.getSourceImagePath(tile.id).sure();
+
+        if (_tilegroupsPerImage[imageOrAtlasPath] == null) {
+            _tilegroupsPerImage[imageOrAtlasPath] = tileset.isAtlas
+                ? new TileGroup(tileset.atlas.sure())
+                : new TileGroup(tile.tile);
         }
-        return _tilegroups[tileset.name];
+
+        return _tilegroupsPerImage[imageOrAtlasPath];
     }
 
     private inline function embedTilegroups(container: Object) {
         // the order of these shouldn't matter as they are all supposed to be 
         // in the same layer anyways
-        for (tilegroup in _tilegroups) {
+        for (tilegroup in _tilegroupsPerImage) {
             container.addChild(tilegroup);
         }
     }
@@ -170,7 +180,7 @@ class Layer {
     }
 
     private inline function markTileChange(tile: MapTile) {
-        final tilegroup = getTileGroupFor(tile.tileset);
+        final tilegroup = getTileGroupFor(tile);
         _tilegroupsToRedraw.add(tilegroup);
         _needsRedraw = true;
     }

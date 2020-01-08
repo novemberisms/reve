@@ -33,7 +33,10 @@ class MapTile {
         id = tileData.id;
         properties = tileData.properties;
         type = tileData.type.or("");
-        size = tileset.tilesize;
+        
+        size = tileset.isAtlas 
+            ? tileset.tilesize 
+            : new Vector(tileData.imagewidth.sure(), tileData.imageheight.sure());
 
         _createTileFn = createTileFn;
         _createAnimationFn = createAnimationFn;

@@ -119,7 +119,7 @@ class TileLayer extends Layer {
             
             if (tile.isAnimated) continue;
 
-            final group = getTileGroupFor(tile.tileset);
+            final group = getTileGroupFor(tile);
 
             if (!_tilegroupsToRedraw.contains(group)) continue;
 
@@ -210,14 +210,27 @@ class TileLayer extends Layer {
 
     private inline function emitAnimation(tile: MapTile, gridPosition: Vector, index: Int) {
         final animation = tile.cloneAnimation();
-        animation.setPositionV(gridPosition * tilesize);
+
+        animation.setPosition(
+            gridPosition.x * tilesize.x,
+            (gridPosition.y + 1) * tilesize.y - tile.size.y // see `emitTile` for why this is like this
+        );
+        
         _animations[index] = animation;
     }
 
     private inline function emitTile(tile: MapTile, gridPosition: Vector, index: Int) {
-        final tileGroup = getTileGroupFor(tile.tileset);
-        final position = gridPosition * tilesize;
-        tileGroup.add(position.x, position.y, tile.tile);
+        final tileGroup = getTileGroupFor(tile);
+
+        final x = gridPosition.x * tilesize.x;
+        final y = (gridPosition.y + 1) * tilesize.y - tile.size.y;
+
+        // in Tiled, the origin of a tile is in the lower left corner. So if a tile's size is
+        // larger than the tilesize of the map, the tile's lower left corner should line up with
+        // the lower left corner of the grid cell. This is why the computation for y is like that.
+        // In most cases, the tile's size will be the same as the map's tilesize, so the topleft corners align just fine.
+
+        tileGroup.add(x, y, tile.tile);
         _tiles[index] = tile;
     }
 

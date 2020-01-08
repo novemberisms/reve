@@ -1,5 +1,6 @@
 package reve.test;
 
+import hxd.Res;
 import utest.Runner;
 import utest.ui.Report;
 import reve.test.cases.*;
@@ -9,6 +10,9 @@ import reve.test.cases.algorithms.*;
 
 class TestAll {
     static function main() {
+
+        Res.initEmbed();
+
         final runner = new Runner();
 
         runner.addCase(new TestActionController());
@@ -23,6 +27,7 @@ class TestAll {
         runner.addCase(new TestSystemOrdering());
         runner.addCase(new TestTimeAverage());
         runner.addCase(new TestVector());
+        runner.addCase(new TestLevel());
 
         Report.create(runner);
         runner.run();

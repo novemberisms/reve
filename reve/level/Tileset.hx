@@ -14,6 +14,12 @@ enum TilesetType {
     collection(collectionSet: CollectionTileset);
 }
 
+/**
+ * An abstract class that unifies the two kinds of tilesets: those that use a single sprite atlas,
+ * and those that use a collection of images for its tiles.
+ * 
+ * Pattern match on `.kind` to downcast to the correct type. 
+ */
 class Tileset {
 
     public var kind(default, null): TilesetType;
@@ -24,7 +30,6 @@ class Tileset {
 
     private final _tiles: Map<Int, MapTile> = [];
     private final _animations: Map<Int, Animation> = [];
-    private final _tiledTileData: Map<Int, TiledTile> = [];
 
     private final _tilesetPath: String;
 
@@ -46,14 +51,6 @@ class Tileset {
 
         name = tilesetData.name;
         tilecount = tilesetData.tilecount;
-        
-        // save the "tiles" array from the tileset data to a map since we're going to
-        // need to reference it in `createTile`
-        if (tilesetData.tiles.exists()) {
-            for (tile in tilesetData.tiles.sure()) {
-                _tiledTileData[tile.id] = tile;
-            }
-        }
         
         if (!tilesetData.tiles.exists()) return;
         

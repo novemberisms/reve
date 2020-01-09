@@ -30,7 +30,7 @@ class TilesetService {
             // load the data
             final tilesetData = Res.load(tilesetPath.toString());
 
-            final tileset = new Tileset(tilesetData);
+            final tileset = Tileset.create(tilesetData);
 
             add(tileset);
         }

@@ -146,12 +146,10 @@ class Layer {
 
         final tileset = tile.tileset;
 
-        final imageOrAtlasPath = tileset.getSourceImagePath(tile.id).sure();
+        final imageOrAtlasPath = tileset.getSourceImagePath(tile.id);
 
         if (_tilegroupsPerImage[imageOrAtlasPath] == null) {
-            _tilegroupsPerImage[imageOrAtlasPath] = tileset.isAtlas
-                ? new TileGroup(tileset.atlas.sure())
-                : new TileGroup(tile.tile);
+            _tilegroupsPerImage[imageOrAtlasPath] = tileset.createTilegroup(tile.id);
         }
 
         return _tilegroupsPerImage[imageOrAtlasPath];

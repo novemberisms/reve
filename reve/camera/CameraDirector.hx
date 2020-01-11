@@ -23,6 +23,8 @@ class CameraDirector {
     private final _targetStack = new GenericStack<CameraTarget>();
     /** Holds all the zones that the camera should try to avoid seeing.
 
+        TODO: not implemented yet
+
         TODO: for now this is an array, but maybe in the future if there would be a lot of them, then it could
         be turned into a spatialhash or quadtree **/
     private final _hiddenZones = new Array<Rectangle>(); 

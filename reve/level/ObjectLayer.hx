@@ -3,6 +3,8 @@ package reve.level;
 import h2d.Object;
 import reve.level.Types;
 
+using reve.util.ObjectExtender;
+
 /** Extends Layer **/
 class ObjectLayer extends Layer {
 
@@ -49,9 +51,7 @@ class ObjectLayer extends Layer {
             final spawnCommand = _level.factory.onObject(obj, this, _level);
             switch (spawnCommand) {
             case allow:
-                final maptile = obj.maptile;
-                final tilegroup = getTileGroupFor(maptile);
-                tilegroup.addTransform(obj.position.x, obj.position.y, obj.scale.x, obj.scale.y, obj.rotation, maptile.tile);
+                emitSprite(obj);
             case prevent:
                 // do nothing
             case replace(newobj):
@@ -68,4 +68,28 @@ class ObjectLayer extends Layer {
     // HELPER FUNCTIONS
     //=========================================================================
     
+    private function emitSprite(object: MapObject.TileObject) {
+        final maptile = object.maptile;
+
+        if (maptile.isAnimated) {
+            final animation = maptile.cloneAnimation();
+
+            animation.setPositionV(object.position);
+            animation.setScaleV(object.scale);
+            animation.rotation = object.rotation;
+
+            _animations[object.id] = animation;
+
+        } else {
+            final tilegroup = getTileGroupFor(maptile);
+            tilegroup.addTransform(
+                object.position.x,
+                object.position.y,
+                object.scale.x,
+                object.scale.y,
+                object.rotation,
+                maptile.tile
+            );
+        }
+    }
 }

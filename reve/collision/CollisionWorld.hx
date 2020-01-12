@@ -16,8 +16,12 @@ abstract CollisionWorld(SpatialHash<ICollisionShape>) {
     /**
      * Adds a shape to the collision world. If the shape has already been added, it will update the location of the shape.
      */
-    public function add(shape: ICollisionShape) {
+    public inline function add(shape: ICollisionShape) {
         this.add(shape, shape.bounds);
+    }
+
+    public inline function remove(shape: ICollisionShape) {
+        this.remove(shape);
     }
 
     public function getCollidingShapes(shape: ICollisionShape): Array<ICollisionShape> {

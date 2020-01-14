@@ -33,11 +33,12 @@ class Camera {
 
     /** Applies the camera transformation on the object such that the region in the object
         corresponding to the camera viewport will take up the entirety of the screen. This does
-        not do any view culling. **/
-    public function apply(object: Object) {
+        not do any view culling. `parallaxScale` is an optional parameter that can be used to have
+        a parallax scrolling effect. Lower numbers denote layers that are further away. **/
+    public function apply(object: Object, parallaxScale: Float = 1.0) {
 		final scale = getWindowSize() / _viewport.size;
 
-		final truePosition = -(_viewport.topleft * scale);
+		final truePosition = -(_viewport.topleft * scale * parallaxScale);
 
 		object.setPositionV(truePosition.floor());
 		object.setScaleV(scale);

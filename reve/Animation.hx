@@ -9,6 +9,7 @@ import reve.util.Timer;
 class Animation extends Drawable {
 
     public var ongoing(get, never): Bool;
+    public var currentFrame(get, never): Tile;
 
     private final frames: Array<Tile>;
     private final timer: Timer;
@@ -53,12 +54,28 @@ class Animation extends Drawable {
         timer.unpause();
     }
 
-    private inline function currentFrame(): Tile {
-        return frames[frameIndex];
+    private override function draw(ctx: RenderContext) {
+        emitTile(ctx, currentFrame);
     }
 
-    private override function draw(ctx: RenderContext) {
-        emitTile(ctx, currentFrame());
+    private override function getBoundsRec(
+        relativeTo: Object,
+        out: h2d.col.Bounds,
+        forSize: Bool
+    ) {
+        super.getBoundsRec(relativeTo, out, forSize);
+        addBounds(
+            relativeTo, 
+            out, 
+            currentFrame.dx, 
+            currentFrame.dy, 
+            currentFrame.width, 
+            currentFrame.height
+        );
+    }
+
+    private inline function get_currentFrame(): Tile {
+        return frames[frameIndex];
     }
 
     private inline function get_ongoing(): Bool {
@@ -70,7 +87,7 @@ class FadeBetweenAnimation extends Animation {
 
     private override function draw(ctx: RenderContext) {
         if (!ongoing) {
-            emitTile(ctx, currentFrame());
+            emitTile(ctx, currentFrame);
             return;
         }
 
@@ -81,7 +98,7 @@ class FadeBetweenAnimation extends Animation {
                 lastIndex = frames.length - 1;
             } else {
                 // not looping, so don't draw a ghost image if it's the very first frame
-                emitTile(ctx, currentFrame());
+                emitTile(ctx, currentFrame);
                 return;
             }
         }
@@ -96,6 +113,6 @@ class FadeBetweenAnimation extends Animation {
 
         ctx.globalAlpha = oldAlpha;
 
-        emitTile(ctx, currentFrame());
+        emitTile(ctx, currentFrame);
     }
 }

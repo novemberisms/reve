@@ -61,6 +61,10 @@ class Game extends App {
         return previousState;
     }
 
+    public inline function getDrawCalls(): Int {
+        return engine.drawCalls;
+    }
+
     @:virtual
     private function onError(error: Dynamic, stackTrace: Array<StackItem>) {
 		// override me!

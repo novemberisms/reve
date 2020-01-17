@@ -25,16 +25,16 @@ class ActionController<Target> {
         _queue.push(action);
     }
 
-    public inline function isDown(action: String): Bool {
+    public inline function isQueuedDown(action: String): Bool {
         return _queue.has(action);
     }
 
-    public function isReleased(action: String): Bool {
+    public function isQueuedReleased(action: String): Bool {
         if (_queue.has(action)) return false;
-        return _previousQueue.has(action)
+        return _previousQueue.has(action);
     }
 
-    public function isPressed(action: String): Bool {
+    public function isQueuedPressed(action: String): Bool {
         if (_previousQueue.has(action)) return false;
         return _queue.has(action);
     }

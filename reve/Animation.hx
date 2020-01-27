@@ -27,8 +27,13 @@ class Animation extends Drawable {
     }
 
     public inline function clone(): Animation {
-        
         return new Animation(frames, timer.frequency, looping);
+    }
+
+    public inline function reversed(): Animation {
+        final reverseFrames = frames.copy();
+        reverseFrames.reverse();
+        return new Animation(reverseFrames, timer.frequency, looping);
     }
 
     public function update(dt: Float) {

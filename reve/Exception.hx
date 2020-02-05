@@ -11,8 +11,13 @@ class Exception {
     } 
 
     public function toString(): String {
-        final classPath = this.getClass().getClassName().split(".");
-        final className = classPath[classPath.length - 1];
+        final className = getClassName(this);
         return '$className: $message';
+    }
+
+    public static function getClassName<T>(d: T): String {
+        final classPath = d.getClass().getClassName().split(".");
+        final className = classPath[classPath.length - 1];
+        return className;
     }
 }

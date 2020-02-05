@@ -21,4 +21,8 @@ abstract Maybe<T>(Null<T>) from Null<T> {
     public inline function map<S>(fn: (T)-> S): Maybe<S> {
         return exists() ? fn(this) : null;
     }
+
+    public static inline function downcast<T: {}, S: T>(value: T, c: Class<S>): Maybe<S> {
+        return Std.downcast(value, c);
+    }
 }

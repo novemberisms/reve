@@ -84,11 +84,12 @@ abstract Rectangle(Bounds) from Bounds to Bounds {
         fit inside a containing rectangle. If this rectangle cannot fit within the container,
         then this will throw an exception string. **/
     public function fitInside(container: Rectangle): Rectangle {
-#if !skipAsserts
+        #if !skipAsserts
         if (area > container.area + 1) throw '${toString()} cannot fit inside $container. Insufficient area.';
         if (this.width > container.width + 1) throw '${toString()} cannot fit inside $container. Insufficient width.';
         if (this.height > container.height + 1) throw '${toString()} cannot fit inside $container. Insufficient height.';
-#end
+        #end
+        
         final result = copy;
 
         if (result.xMin < container.xMin) {

@@ -19,6 +19,32 @@ abstract Polygon(HeapsPolygon) from HeapsPolygon to HeapsPolygon {
 #end
     }
 
+    public static inline function tri(
+        x1: Float, y1: Float, 
+        x2: Float, y2: Float, 
+        x3: Float, y3: Float
+    ): Polygon {
+        return new Polygon([
+            new Vector(x1, y1),
+            new Vector(x2, y2),
+            new Vector(x3, y3),
+        ]);
+    }
+
+    public static inline function quad(
+        x1: Float, y1: Float, 
+        x2: Float, y2: Float, 
+        x3: Float, y3: Float, 
+        x4: Float, y4: Float
+    ): Polygon {
+        return new Polygon([
+            new Vector(x1, y1),
+            new Vector(x2, y2),
+            new Vector(x3, y3),
+            new Vector(x4, y4),
+        ]);
+    }
+
     /** Returns whether the given point is contained within the polygon. If the point lies on the
         edge, it is not considered contained. **/
     public function contains(point: Vector): Bool {

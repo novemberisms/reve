@@ -37,6 +37,33 @@ class GraphicsExtender {
 
 		graphics.endFill();
 	}
+
+	public static function rectangleLine(graphics: Graphics, rect: Rectangle, color: Int, lineWidth = 1) {
+		graphics.clear();
+		graphics.lineStyle(lineWidth, color, 1);
+		graphics.drawRect(rect.xMin, rect.yMin, rect.width, rect.height);
+	}
+
+	public static function circleLine(graphics: Graphics, circ: Circle, color: Int, lineWidth = 1) {
+		graphics.clear();
+		graphics.lineStyle(lineWidth, color, 1);
+		graphics.drawCircle(circ.cx, circ.cy, circ.radius);
+	}
+
+	public static function polygonLine(graphics: Graphics, poly: Polygon, color: Int, lineWidth = 1) {
+		graphics.clear();
+		graphics.lineStyle(lineWidth, color, 1);
+		
+		final firstPoint = poly.points[0];
+		graphics.moveTo(firstPoint.x, firstPoint.y);
+
+		for (i in 1...poly.points.length) {
+			final p = poly.points[i];
+			graphics.lineTo(p.x, p.y);
+		}
+
+		graphics.lineTo(firstPoint.x, firstPoint.y);
+	}
     
     public static inline function drawShape(graphics: Graphics, shape: ICollisionShape, color: Int) {
 

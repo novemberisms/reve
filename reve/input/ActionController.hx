@@ -4,7 +4,6 @@ import reve.util.Set;
 import reve.util.Event;
 using Lambda;
 
-@:generic
 class ActionController<Target> {
 
     public var enabled(default, set) = true;
@@ -85,6 +84,10 @@ class ActionController<Target> {
     public inline function addListenerReleased(action: String, fn: Target -> Void) {
         createEventIfNotExists(action, _onReleased);
         _onReleased[action].add(fn);
+    }
+
+    public inline function hasAction(action: String): Bool {
+        return actionsListenedTo.contains(action);
     }
 
     private inline function set_enabled(v: Bool): Bool {

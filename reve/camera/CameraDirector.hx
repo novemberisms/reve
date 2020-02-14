@@ -6,6 +6,7 @@ import reve.camera.PointOfInterest;
 import reve.math.Extrapolators;
 import reve.math.Rectangle;
 import reve.math.Vector;
+import reve.util.Maybe;
 
 using Lambda;
 using reve.util.GenericStackExtender;
@@ -18,6 +19,8 @@ class CameraDirector {
     public var minimumPositionSpeed = 40.0;
     public var minimumSizeSpeed = 40.0;
     public var limits = new Rectangle(Vector.zero, 5000 * Vector.one);
+
+    public var currentTarget(get, never): Maybe<CameraTarget>;
 
     private final _pointsOfInterest = new Array<PointOfInterest>();
     private final _targetStack = new GenericStack<CameraTarget>();
@@ -209,5 +212,9 @@ class CameraDirector {
         }
 
         return result;
+    }
+
+    private inline function get_currentTarget(): Maybe<CameraTarget> {
+        return _targetStack.peek();
     }
 }

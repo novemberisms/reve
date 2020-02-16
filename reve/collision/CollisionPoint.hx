@@ -26,6 +26,11 @@ class CollisionPoint implements ICollisionShape {
         return new CollisionPoint(new Vector(x, y), ownerID);
     }
 
+    public inline function moveTopLeft(position: Vector) {
+        vector.x = position.x;
+        vector.y = position.y;
+    }
+
     public inline function getPenetration(other: ICollisionShape): Vector {
         return PenetrationAlgorithms.getPenetration(this, other);
     }

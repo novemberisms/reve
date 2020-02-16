@@ -31,6 +31,11 @@ class CollisionPolygon implements ICollisionShape {
         return new CollisionPolygon(polygon, ownerID);
     }
 
+    public inline function moveTopLeft(position: Vector) {
+        final translation = position - bounds.topleft;
+        polygon.translate(translation);
+    }
+
     public inline function getPenetration(other: ICollisionShape): Vector {
         return PenetrationAlgorithms.getPenetration(this, other);
     }

@@ -25,7 +25,12 @@ class CollisionCircle implements ICollisionShape {
 
     public static function from(center: Vector, radius: Float, ?ownerID: CollisionShapeOwnerID): CollisionCircle {
         return new CollisionCircle(new Circle(center, radius), ownerID);
-    } 
+    }
+
+    public inline function moveTopLeft(position: Vector) {
+        circle.cx = position.x + circle.radius;
+        circle.cy = position.y + circle.radius;
+    }
 
     public inline function getPenetration(other: ICollisionShape): Vector {
         return PenetrationAlgorithms.getPenetration(this, other);

@@ -38,6 +38,10 @@ class CollisionRectangle implements ICollisionShape {
         return new CollisionRectangle(rect, ownerID);
     }
 
+    public inline function moveTopLeft(position: Vector) {
+        rectangle.topleft = position;
+    }
+
     public inline function getPenetration(other: ICollisionShape): Vector {
         return PenetrationAlgorithms.getPenetration(this, other);
     }

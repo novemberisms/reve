@@ -26,6 +26,18 @@ abstract Set<T>(IMap<T, Bool>) {
         return this.exists(element);
     }
 
+    public function map<S: {}>(fn: T -> S): Set<S> {
+        final result = new Set<S>();
+        for (item in this.keys()) result.add(fn(item));
+        return result;
+    }
+
+    public function toArray(): Array<T> {
+        final result = new Array<T>();
+        for (item in this.keys()) result.push(item);
+        return result;
+    }
+
     public inline function iterator(): Iterator<T> {
         return this.keys();
     }

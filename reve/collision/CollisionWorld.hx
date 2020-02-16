@@ -5,7 +5,7 @@ import reve.spatialhash.SpatialHash;
 import reve.math.Rectangle;
 import reve.collision.ICollisionShape;
 
-@:forward(remove, has)
+@:forward(remove, has, query)
 abstract CollisionWorld(SpatialHash<ICollisionShape>) {
 
     public function new(bounds: Rectangle, averageCellSize: Float = 100) {

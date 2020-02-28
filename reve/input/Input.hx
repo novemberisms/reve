@@ -25,10 +25,8 @@ class Input {
         return hasBinding(action) ? _bindings[action].isDown() : false;
     }
 
-    /** Not supported yet. Need an actual controller to test **/
-    @:noCompletion
-    public function axis(action: String): Float {
-        return 0;
+    public inline function getValue(action: String): Float {
+        return hasBinding(action) ? _bindings[action].getValue() : 0;
     }
 
     public function bindActionKey(action: String, key: Int) {
@@ -42,9 +40,8 @@ class Input {
     }
 
     public function bindActionAxis(action: String, axis: Int) {
-        createIfNotExists(action);
-        // StringODO
-        throw "Not yet implemented!";
+        createIfNotExists(action); 
+        _bindings[action].addAxis(axis);
     }
 
     public inline function hasBinding(action: String): Bool {
@@ -67,6 +64,7 @@ private class Binding {
 
     public final keys: Array<Int> = [];
     public final buttons: Array<Int> = [];
+    public final axes: Array<Int> = [];
     
     public function new() {}
 
@@ -78,6 +76,10 @@ private class Binding {
         buttons.push(button);
     }
 
+    public inline function addAxis(axis: Int) {
+        axes.push(axis);
+    }
+
     public function isPressed(): Bool {
         for (key in keys) {
             if (Key.isPressed(key)) return true;
@@ -85,6 +87,10 @@ private class Binding {
 
         for (btn in buttons) {
             if (Gamepad.isPressed(btn)) return true;
+        }
+
+        for (axis in axes) {
+            if (Gamepad.isPressed(axis)) return true;
         }
 
         return false;
@@ -99,6 +105,10 @@ private class Binding {
             if (Gamepad.isReleased(btn)) return true;
         }
 
+        for (axis in axes) {
+            if (Gamepad.isReleased(axis)) return true;
+        }
+
         return false;
     }
 
@@ -111,6 +121,28 @@ private class Binding {
             if (Gamepad.isDown(btn)) return true;
         }
 
+        for (axis in axes) {
+            if (Gamepad.isDown(axis)) return true;
+        }
+
         return false;
+    }
+
+    public function getValue(): Float {
+
+        for (axis in axes) {
+            final value = Gamepad.getValue(axis);
+            if (value > 0) return value;
+        }
+
+        for (btn in buttons) {
+            if (Gamepad.isDown(btn)) return 1;
+        }
+
+        for (key in keys) {
+            if (Key.isDown(key)) return 1;
+        }
+
+        return 0;
     }
 }
